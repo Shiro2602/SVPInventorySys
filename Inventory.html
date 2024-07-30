@@ -4,9 +4,86 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inventory Dashboard</title>
+    <title>Inventory</title>
     <!-- SB Admin 2 Bootstrap CSS -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/startbootstrap-sb-admin-2/4.0.0/css/sb-admin-2.min.css" rel="stylesheet">
+    <style>
+        .sidebar {
+            background-color: #2c3e50;
+        }
+
+        .sidebar .nav-item .nav-link {
+            color: #ecf0f1;
+        }
+
+        .sidebar .nav-item.active .nav-link {
+            color: #2c3e50;
+            background-color: #ecf0f1;
+        }
+
+        .topbar {
+            background-color: #bdc3c7;
+        }
+
+        .topbar .nav-item .nav-link {
+            color: #2c3e50;
+        }
+
+        .inventory-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            background-color: #ecf0f1;
+            border-bottom: 1px solid #bdc3c7;
+        }
+
+        .inventory-header h1 {
+            margin: 0;
+        }
+
+        .inventory-controls {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .inventory-controls .btn {
+            background-color: #34495e;
+            color: #ecf0f1;
+        }
+
+        .inventory-controls .btn:hover {
+            background-color: #2c3e50;
+        }
+
+        .inventory-cards {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            padding: 1rem;
+        }
+
+        .inventory-card {
+            background-color: #ecf0f1;
+            border: 1px solid #bdc3c7;
+            padding: 1rem;
+            width: calc(33.333% - 2rem);
+            box-sizing: border-box;
+        }
+
+        @media (max-width: 992px) {
+            .inventory-card {
+                width: calc(50% - 2rem);
+            }
+        }
+
+        @media (max-width: 576px) {
+            .inventory-card {
+                width: calc(100% - 2rem);
+            }
+        }
+    </style>
 </head>
 
 <body id="page-top">
@@ -26,7 +103,7 @@
             <hr class="sidebar-divider my-0">
 
             <!-- Nav Item - Dashboard -->
-            <li class="nav-item active">
+            <li class="nav-item">
                 <a class="nav-link" href="#">
                     <i class="fas fa-fw fa-tachometer-alt"></i>
                     <span>Dashboard</span></a>
@@ -36,7 +113,7 @@
             <hr class="sidebar-divider">
 
             <!-- Nav Item - Inventory -->
-            <li class="nav-item">
+            <li class="nav-item active">
                 <a class="nav-link" href="#">
                     <i class="fas fa-fw fa-boxes"></i>
                     <span>Inventory</span></a>
@@ -62,7 +139,7 @@
             <div id="content">
 
                 <!-- Topbar -->
-                <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+                <nav class="navbar navbar-expand navbar-light topbar mb-4 static-top shadow">
 
                     <!-- Sidebar Toggle (Topbar) -->
                     <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
@@ -90,57 +167,51 @@
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
 
-                    <!-- Page Heading -->
-                    <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                        <h1 class="h3 mb-0 text-gray-800">Inventory Dashboard</h1>
+                    <!-- Inventory Header -->
+                    <div class="inventory-header">
+                        <h1>Inventory</h1>
+                        <div class="inventory-controls">
+                            <input type="text" class="form-control" placeholder="Search...">
+                            <button class="btn btn-primary">Add</button>
+                            <div class="filter">
+                                Filter:
+                                <button class="btn btn-secondary">Tools</button>
+                                <button class="btn btn-secondary">Materials</button>
+                            </div>
+                        </div>
                     </div>
 
-                    <!-- Content Row -->
-                    <div class="row">
-
-                        <!-- Total Tools Card -->
-                        <div class="col-xl-4 col-md-6 mb-4">
+                    <!-- Inventory Cards -->
+                    <div class="inventory-cards row">
+                        <div class="inventory-card col-xl-3 col-md-6 mb-4">
                             <div class="card border-left-primary shadow h-100 py-2">
                                 <div class="card-body">
-                                    <div class="row no-gutters align-items-center">
-                                        <div class="col mr-2">
-                                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Total Tools</div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-800">X</div>
-                                        </div>
-                                    </div>
+                                    <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Tool Name</div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">ID: 12313</div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">Quantity: 1</div>
                                 </div>
                             </div>
                         </div>
-
-                        <!-- Tools in Use Card -->
-                        <div class="col-xl-4 col-md-6 mb-4">
-                            <div class="card border-left-danger shadow h-100 py-2">
+                        <div class="inventory-card col-xl-3 col-md-6 mb-4">
+                            <div class="card border-left-success shadow h-100 py-2">
                                 <div class="card-body">
-                                    <div class="row no-gutters align-items-center">
-                                        <div class="col mr-2">
-                                            <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">Tools in Use</div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-800">X</div>
-                                        </div>
-                                    </div>
+                                    <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Material Name</div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">ID: 12313</div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">Quantity: 10</div>
                                 </div>
                             </div>
                         </div>
-
-                        <!-- Tools in Maintenance Card -->
-                        <div class="col-xl-4 col-md-6 mb-4">
-                            <div class="card border-left-warning shadow h-100 py-2">
+                        <div class="inventory-card col-xl-3 col-md-6 mb-4">
+                            <div class="card border-left-primary shadow h-100 py-2">
                                 <div class="card-body">
-                                    <div class="row no-gutters align-items-center">
-                                        <div class="col mr-2">
-                                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Tools in Maintenance</div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-800">X</div>
-                                        </div>
-                                    </div>
+                                    <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Tool Name</div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">ID: 12313</div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">Quantity: 1</div>
                                 </div>
                             </div>
                         </div>
-
                     </div>
+
                 </div>
                 <!-- /.container-fluid -->
 
