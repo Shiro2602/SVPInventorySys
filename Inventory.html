@@ -1,91 +1,75 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inventory</title>
     <!-- SB Admin 2 Bootstrap CSS -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/startbootstrap-sb-admin-2/4.0.0/css/sb-admin-2.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/startbootstrap-sb-admin-2/4.1.3/css/sb-admin-2.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
     <style>
-        .sidebar {
-            background-color: #2c3e50;
-        }
-
-        .sidebar .nav-item .nav-link {
-            color: #ecf0f1;
-        }
-
-        .sidebar .nav-item.active .nav-link {
-            color: #2c3e50;
-            background-color: #ecf0f1;
-        }
-
-        .topbar {
-            background-color: #bdc3c7;
-        }
-
-        .topbar .nav-item .nav-link {
-            color: #2c3e50;
-        }
-
         .inventory-header {
+            margin-bottom: 20px;
+        }
+        .inventory-header .btn {
+            background-color: #5a5a5a;
+            border-color: #5a5a5a;
+        }
+        .inventory-header .input-group {
+            position: relative;
+            margin-bottom: 10px;
+        }
+        .inventory-header .input-group input {
+            width: 100%;
+            padding: 10px 20px;
+            border-radius: 50px;
+            border: 1px solid #e3e6f0;
+            background-color: #f8f9fc;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.075);
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .inventory-header .input-group input:focus {
+            border-color: #a1a1a1;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        }
+        .filter-btn-group {
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            padding: 1rem;
-            background-color: #ecf0f1;
-            border-bottom: 1px solid #bdc3c7;
         }
-
-        .inventory-header h1 {
-            margin: 0;
+        .filter-btn-group .btn {
+            margin-left: 5px;
+            background-color: #5a5a5a;
+            border-color: #5a5a5a;
         }
-
-        .inventory-controls {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
+        .filter-btn-group .filter-label {
+            margin: 0 10px;
+            color: grey;
+            font-weight: bold;
         }
-
-        .inventory-controls .btn {
-            background-color: #34495e;
-            color: #ecf0f1;
+        .inventory-item {
+            background-color: #ffffff;
+            border: 1px solid #e3e6f0;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
         }
-
-        .inventory-controls .btn:hover {
-            background-color: #2c3e50;
+        .inventory-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
         }
-
-        .inventory-cards {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1rem;
-            padding: 1rem;
+        .inventory-item h5 {
+            font-size: 1.25rem;
+            margin-bottom: 10px;
         }
-
-        .inventory-card {
-            background-color: #ecf0f1;
-            border: 1px solid #bdc3c7;
-            padding: 1rem;
-            width: calc(33.333% - 2rem);
-            box-sizing: border-box;
-        }
-
-        @media (max-width: 992px) {
-            .inventory-card {
-                width: calc(50% - 2rem);
-            }
-        }
-
-        @media (max-width: 576px) {
-            .inventory-card {
-                width: calc(100% - 2rem);
-            }
+        .inventory-item p {
+            margin-bottom: 5px;
+            color: #6c757d;
         }
     </style>
 </head>
-
 <body id="page-top">
 
     <!-- Page Wrapper -->
@@ -104,7 +88,7 @@
 
             <!-- Nav Item - Dashboard -->
             <li class="nav-item">
-                <a class="nav-link" href="#">
+                <a class="nav-link" href="index.html">
                     <i class="fas fa-fw fa-tachometer-alt"></i>
                     <span>Dashboard</span></a>
             </li>
@@ -114,20 +98,24 @@
 
             <!-- Nav Item - Inventory -->
             <li class="nav-item active">
-                <a class="nav-link" href="#">
-                    <i class="fas fa-fw fa-boxes"></i>
+                <a class="nav-link" href="inventory.html">
+                    <i class="fas fa-fw fa-box"></i>
                     <span>Inventory</span></a>
+            </li>
+
+            <!-- Nav Item - Status -->
+            <li class="nav-item">
+                <a class="nav-link" href="status.html">
+                    <i class="fas fa-fw fa-info-circle"></i>
+                    <span>Status</span></a>
             </li>
 
             <!-- Nav Item - History -->
             <li class="nav-item">
-                <a class="nav-link" href="#">
+                <a class="nav-link" href="history.html">
                     <i class="fas fa-fw fa-history"></i>
                     <span>History</span></a>
             </li>
-
-            <!-- Divider -->
-            <hr class="sidebar-divider d-none d-md-block">
 
         </ul>
         <!-- End of Sidebar -->
@@ -139,12 +127,7 @@
             <div id="content">
 
                 <!-- Topbar -->
-                <nav class="navbar navbar-expand navbar-light topbar mb-4 static-top shadow">
-
-                    <!-- Sidebar Toggle (Topbar) -->
-                    <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
-                        <i class="fa fa-bars"></i>
-                    </button>
+                <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
 
                     <!-- Topbar Navbar -->
                     <ul class="navbar-nav ml-auto">
@@ -155,7 +138,7 @@
                         <li class="nav-item dropdown no-arrow">
                             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <span class="mr-2 d-none d-lg-inline text-gray-600 small">Username</span>
-                                <img class="img-profile rounded-circle" src="https://via.placeholder.com/60">
+                                <img class="img-profile rounded-circle" src="img/undraw_profile.svg">
                             </a>
                         </li>
 
@@ -167,47 +150,45 @@
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
 
-                    <!-- Inventory Header -->
+                    <!-- Page Heading -->
+                    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                        <h1 class="h3 mb-0 text-gray-800">Inventory</h1>
+                    </div>
+
+                    <!-- Inventory Content -->
                     <div class="inventory-header">
-                        <h1>Inventory</h1>
-                        <div class="inventory-controls">
+                        <div class="input-group">
                             <input type="text" class="form-control" placeholder="Search...">
-                            <button class="btn btn-primary">Add</button>
-                            <div class="filter">
-                                Filter:
-                                <button class="btn btn-secondary">Tools</button>
-                                <button class="btn btn-secondary">Materials</button>
-                            </div>
+                        </div>
+                        <div class="filter-btn-group">
+                            <button class="btn btn-dark">Add</button>
+                            <span class="filter-label">|</span>
+                            <span class="filter-label">Filter:</span>
+                            <button class="btn btn-dark">Tools</button>
+                            <button class="btn btn-dark">Materials</button>
                         </div>
                     </div>
 
-                    <!-- Inventory Cards -->
-                    <div class="inventory-cards row">
-                        <div class="inventory-card col-xl-3 col-md-6 mb-4">
-                            <div class="card border-left-primary shadow h-100 py-2">
-                                <div class="card-body">
-                                    <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Tool Name</div>
-                                    <div class="h5 mb-0 font-weight-bold text-gray-800">ID: 12313</div>
-                                    <div class="h5 mb-0 font-weight-bold text-gray-800">Quantity: 1</div>
-                                </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="inventory-item">
+                                <h5>Tool Name</h5>
+                                <p>ID: 001</p>
+                                <p>Quantity: 10</p>
                             </div>
                         </div>
-                        <div class="inventory-card col-xl-3 col-md-6 mb-4">
-                            <div class="card border-left-success shadow h-100 py-2">
-                                <div class="card-body">
-                                    <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Material Name</div>
-                                    <div class="h5 mb-0 font-weight-bold text-gray-800">ID: 12313</div>
-                                    <div class="h5 mb-0 font-weight-bold text-gray-800">Quantity: 10</div>
-                                </div>
+                        <div class="col-md-4">
+                            <div class="inventory-item">
+                                <h5>Material Name</h5>
+                                <p>ID: 002</p>
+                                <p>Quantity: 20</p>
                             </div>
                         </div>
-                        <div class="inventory-card col-xl-3 col-md-6 mb-4">
-                            <div class="card border-left-primary shadow h-100 py-2">
-                                <div class="card-body">
-                                    <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Tool Name</div>
-                                    <div class="h5 mb-0 font-weight-bold text-gray-800">ID: 12313</div>
-                                    <div class="h5 mb-0 font-weight-bold text-gray-800">Quantity: 1</div>
-                                </div>
+                        <div class="col-md-4">
+                            <div class="inventory-item">
+                                <h5>Tool Name</h5>
+                                <p>ID: 003</p>
+                                <p>Quantity: 30</p>
                             </div>
                         </div>
                     </div>
@@ -225,13 +206,9 @@
     <!-- End of Page Wrapper -->
 
     <!-- Bootstrap core JavaScript-->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
-    <!-- Core plugin JavaScript-->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
-    <!-- Custom scripts for all pages-->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/startbootstrap-sb-admin-2/4.0.0/js/sb-admin-2.min.js"></script>
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.6.0/js/bootstrap.bundle.min.js"></script>
+    <!-- SB Admin 2 JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/startbootstrap-sb-admin-2/4.1.3/js/sb-admin-2.min.js"></script>
 </body>
-
 </html>
