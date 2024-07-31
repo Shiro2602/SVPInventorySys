@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Users</title>
+    <!-- SB Admin 2 Bootstrap CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/startbootstrap-sb-admin-2/4.1.3/css/sb-admin-2.min.css"
+        rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <style>
+        .sidebar {
+            background-color: #f8f9fc;
+        }
+
+        .sidebar-brand {
+            background-color: #4e73df;
+            color: #ffffff;
+        }
+
+        .topbar {
+            background-color: #f8f9fc;
+        }
+
+        .container-fluid {
+            padding-top: 20px;
+        }
+
+        .input-group {
+            max-width: 300px;
+            margin-bottom: 20px;
+        }
+
+        .input-group input {
+            border-radius: 20px 0 0 20px;
+        }
+
+        .input-group button {
+            border-radius: 0 20px 20px 0;
+        }
+
+        .table th,
+        .table td {
+            vertical-align: middle;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                display: none;
+            }
+
+            .topbar .username {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body id="page-top">
+
+    <!-- Page Wrapper -->
+    <div id="wrapper">
+
+        <!-- Sidebar -->
+        <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+
+            <!-- Sidebar - Brand -->
+            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="dashboard.html">
+                <div class="sidebar-brand-text mx-3">SERVPRO</div>
+            </a>
+
+            <!-- Divider -->
+            <hr class="sidebar-divider my-0">
+
+            <!-- Nav Item - Dashboard -->
+            <li class="nav-item">
+                <a class="nav-link" href="dashboard.html">
+                    <i class="fas fa-fw fa-tachometer-alt"></i>
+                    <span>Dashboard</span></a>
+            </li>
+
+            <!-- Divider -->
+            <hr class="sidebar-divider">
+
+            <!-- Nav Item - Inventory -->
+            <li class="nav-item">
+                <a class="nav-link" href="Inventory.html">
+                    <i class="fas fa-fw fa-box"></i>
+                    <span>Inventory</span></a>
+            </li>
+
+            <!-- Nav Item - Status -->
+            <li class="nav-item">
+                <a class="nav-link" href="toolstatus.html">
+                    <i class="fas fa-fw fa-info-circle"></i>
+                    <span>Status</span></a>
+            </li>
+
+            <!--Nav Item - Users-->
+            <li class="nav-item active">
+                <a class="nav-link" href="users.html">
+                    <i class="fas  fa-fw fa-user-circle"></i>
+                <span>Users</span></a>
+            </li>
+            
+            <!-- Nav Item - History -->
+            <li class="nav-item">
+                <a class="nav-link" href="history.html">
+                    <i class="fas fa-fw fa-history"></i>
+                    <span>History</span></a>
+            </li>
+
+        </ul>
+        <!-- End of Sidebar -->
+
+        <!-- Content Wrapper -->
+        <div id="content-wrapper" class="d-flex flex-column">
+
+            <!-- Main Content -->
+            <div id="content">
+
+                <!-- Topbar -->
+                <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+
+                    <!-- Topbar Navbar -->
+                    <ul class="navbar-nav ml-auto">
+                    <div class="topbar-divider d-none d-sm-block"></div>
+                        <li class="nav-item dropdown no-arrow">
+                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <span class="mr-2 d-none d-lg-inline text-gray-600 small">Username</span>
+                                <img class="img-profile rounded-circle" src="img/undraw_profile.svg">
+                            </a>
+                        </li>
+                    </ul>
+
+                </nav>
+                <!-- End of Topbar -->
+
+                <!-- Begin Page Content -->
+                <div class="container-fluid">
+
+                    <!-- Page Heading -->
+                    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                        <h1 class="h3 mb-0 text-gray-800">Users</h1>
+                    </div>
+
+                    <!-- Search and Add Button -->
+                    <div class="d-flex align-items-center mb-4">
+                        <div class="input-group">
+                            <input type="text" class="form-control" placeholder="Search...">
+                            <div class="input-group-append">
+                                <button class="btn btn-primary" type="button">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="ml-auto">
+                            <button class="btn btn-primary">
+                                Add User
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Users Table -->
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Image</th>
+                                    <th>Username</th>
+                                    <th>Position</th>
+                                    <th>Date Added</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>1</td>
+                                    <td>Image</td>
+                                    <td>Lorem Ipsum</td>
+                                    <td>Lorem Ipsum</td>
+                                    <td>30/07/2024</td>
+                                    <td>
+                                        <button class="btn btn-secondary btn-sm">Edit</button>
+                                        <button class="btn btn-danger btn-sm">Delete</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+                <!-- /.container-fluid -->
+
+            </div>
+            <!-- End of Main Content -->
+
+        </div>
+        <!-- End of Content Wrapper -->
+
+    </div>
+    <!-- End of Page Wrapper -->
+
+    <!-- Bootstrap core JavaScript-->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.6.0/js/bootstrap.bundle.min.js"></script>
+    <!-- Core plugin JavaScript-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
+    <!-- Custom scripts for all pages-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/startbootstrap-sb-admin-2/4.1.3/js/sb-admin-2.min.js"></script>
+</body>
+
+</html>
