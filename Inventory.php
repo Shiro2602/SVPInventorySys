@@ -202,12 +202,14 @@
 
                     <div class="row" id="inventory-items">
                         <?php
+                        // Database connection
                         include 'dbconnect.php';
 
+                        // Fetch search query and filter
                         $search = isset($_GET['search']) ? $_GET['search'] : '';
                         $filter = isset($_GET['filter']) ? $_GET['filter'] : 'all';
 
-                        // Tools data
+                        // Fetch tools data
                         if ($filter == 'all' || $filter == 'tools') {
                             $sql_tools = "SELECT id, name, quantity, price FROM tools";
                             if ($search) {
@@ -235,7 +237,7 @@
                             }
                         }
 
-                        // Materials data
+                        // Fetch materials data
                         if ($filter == 'all' || $filter == 'materials') {
                             $sql_materials = "SELECT id, name, quantity, price FROM materials";
                             if ($search) {
@@ -268,12 +270,16 @@
                     </div>
 
                 </div>
+                <!-- /.container-fluid -->
 
             </div>
+            <!-- End of Main Content -->
 
         </div>
+        <!-- End of Content Wrapper -->
 
     </div>
+    <!-- End of Page Wrapper -->
 
     <!-- Add Item Modal -->
     <div class="modal fade" id="addItemModal" tabindex="-1" role="dialog" aria-labelledby="addItemModalLabel" aria-hidden="true">
@@ -328,10 +334,14 @@
                     url: 'additem.php',
                     method: 'POST',
                     data: $(this).serialize(),
+                    dataType: 'json', 
                     success: function(response) {
+                        console.log(response); 
                         if (response.success) {
+                            // Close 
                             $('#addItemModal').modal('hide');
                             $('#addItemForm')[0].reset();
+                            // Append the new item to the inventory
                             var newItem = '<div class="col-md-4">' +
                                             '<div class="inventory-item">' +
                                             '<h5>' + response.data.name + ' (' + response.data.type.charAt(0).toUpperCase() + response.data.type.slice(1) + ')</h5>' +
@@ -339,15 +349,21 @@
                                             '<p>Quantity: ' + response.data.quantity + '</p>' +
                                             '<p>Price: ₱' + response.data.price + '</p>' +
                                             '</div>' +
-                                          '</div>';
+                                        '</div>';
                             $('#inventory-items').prepend(newItem);
                         } else {
-                            alert('Failed to add item');
+                            alert('Failed to add item: ' + response.message);
                         }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('AJAX error:', error);
+                        console.log(xhr.responseText); 
+                        alert('AJAX error: ' + error);
                     }
                 });
             });
         });
     </script>
+
 </body>
 </html>
