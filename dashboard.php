@@ -20,7 +20,7 @@
         <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
             <!-- Sidebar - Brand -->
-            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="dashboard.html">
+            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="dashboard.php">
                 <div class="sidebar-brand-text mx-3">SERVPRO</div>
             </a>
 
@@ -29,7 +29,7 @@
 
             <!-- Nav Item - Dashboard -->
             <li class="nav-item active">
-                <a class="nav-link" href="dashboard.html">
+                <a class="nav-link" href="dashboard.php">
                     <i class="fas fa-fw fa-tachometer-alt"></i>
                     <span>Dashboard</span></a>
             </li>
@@ -39,28 +39,28 @@
 
             <!-- Nav Item - Inventory -->
             <li class="nav-item">
-                <a class="nav-link" href="Inventory.html">
+                <a class="nav-link" href="inventory.php">
                     <i class="fas fa-fw fa-box"></i>
                     <span>Inventory</span></a>
             </li>
 
-            <!--Nav  Item - Tool Status-->
+            <!-- Nav Item - Tool Status -->
             <li class="nav-item">
-                <a class="nav-link" href="toolstatus.html">
+                <a class="nav-link" href="toolstatus.php">
                     <i class="fas fa-fw fa-ellipsis-h"></i>
-                <span>Status</span></a>
+                    <span>Status</span></a>
             </li>
 
-            <!--Nav Item - Users-->
+            <!-- Nav Item - Users -->
             <li class="nav-item">
-                <a class="nav-link" href="users.html">
-                    <i class="fas  fa-fw fa-user-circle"></i>
-                <span>Users</span></a>
+                <a class="nav-link" href="users.php">
+                    <i class="fas fa-fw fa-user-circle"></i>
+                    <span>Users</span></a>
             </li>
             
             <!-- Nav Item - History -->
             <li class="nav-item">
-                <a class="nav-link" href="#">
+                <a class="nav-link" href="history.php">
                     <i class="fas fa-fw fa-history"></i>
                     <span>History</span></a>
             </li>
@@ -121,7 +121,23 @@
                                     <div class="row no-gutters align-items-center">
                                         <div class="col mr-2">
                                             <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Total Tools</div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-800">X</div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                                <?php
+                                                // Include database connection
+                                                include 'dbconnect.php';
+
+                                                // Query to get the total number of tools
+                                                $sql = "SELECT COUNT(*) AS total FROM tools";
+                                                $result = $conn->query($sql);
+                                                if ($result->num_rows > 0) {
+                                                    $row = $result->fetch_assoc();
+                                                    echo htmlspecialchars($row['total']);
+                                                } else {
+                                                    echo "0";
+                                                }
+                                                $conn->close();
+                                                ?>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -135,7 +151,23 @@
                                     <div class="row no-gutters align-items-center">
                                         <div class="col mr-2">
                                             <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">Tools in Use</div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-800">X</div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                                <?php
+                                                // Include database connection
+                                                include 'dbconnect.php';
+
+                                                // Query to get the sum of tools in use
+                                                $sql = "SELECT SUM(in_use) AS in_use_sum FROM tools";
+                                                $result = $conn->query($sql);
+                                                if ($result->num_rows > 0) {
+                                                    $row = $result->fetch_assoc();
+                                                    echo htmlspecialchars($row['in_use_sum']);
+                                                } else {
+                                                    echo "0";
+                                                }
+                                                $conn->close();
+                                                ?>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -149,7 +181,23 @@
                                     <div class="row no-gutters align-items-center">
                                         <div class="col mr-2">
                                             <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Tools in Maintenance</div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-800">X</div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                                <?php
+                                                // Include database connection
+                                                include 'dbconnect.php';
+
+                                                // Query to get the number of tools needing maintenance
+                                                $sql = "SELECT COUNT(*) AS maintenance FROM tools WHERE needs_maintenance = 1";
+                                                $result = $conn->query($sql);
+                                                if ($result->num_rows > 0) {
+                                                    $row = $result->fetch_assoc();
+                                                    echo htmlspecialchars($row['maintenance']);
+                                                } else {
+                                                    echo "0";
+                                                }
+                                                $conn->close();
+                                                ?>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>

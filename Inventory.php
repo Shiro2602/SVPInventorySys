@@ -80,11 +80,9 @@
             max-width: 300px;
             margin-bottom: 20px;
         }
-
         .input-group input {
             border-radius: 20px 0 0 20px;
         }
-
         .input-group button {
             border-radius: 0 20px 20px 0;
         }
@@ -99,7 +97,7 @@
         <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
             <!-- Sidebar - Brand -->
-            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="dashboard.html">
+            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="dashboard.php">
                 <div class="sidebar-brand-text mx-3">SERVPRO</div>
             </a>
 
@@ -108,7 +106,7 @@
 
             <!-- Nav Item - Dashboard -->
             <li class="nav-item">
-                <a class="nav-link" href="dashboard.html">
+                <a class="nav-link" href="dashboard.php">
                     <i class="fas fa-fw fa-tachometer-alt"></i>
                     <span>Dashboard</span></a>
             </li>
@@ -118,28 +116,28 @@
 
             <!-- Nav Item - Inventory -->
             <li class="nav-item active">
-                <a class="nav-link" href="inventory.html">
+                <a class="nav-link" href="inventory.php">
                     <i class="fas fa-fw fa-box"></i>
                     <span>Inventory</span></a>
             </li>
 
             <!-- Nav Item - Status -->
             <li class="nav-item">
-                <a class="nav-link" href="toolstatus.html">
+                <a class="nav-link" href="toolstatus.php">
                     <i class="fas fa-fw fa-ellipsis-h"></i>
                     <span>Status</span></a>
             </li>
 
-            <!--Nav Item - Users-->
+            <!-- Nav Item - Users -->
             <li class="nav-item">
-                <a class="nav-link" href="users.html">
+                <a class="nav-link" href="users.php">
                     <i class="fas  fa-fw fa-user-circle"></i>
-                <span>Users</span></a>
+                    <span>Users</span></a>
             </li>
 
             <!-- Nav Item - History -->
             <li class="nav-item">
-                <a class="nav-link" href="history.html">
+                <a class="nav-link" href="history.php">
                     <i class="fas fa-fw fa-history"></i>
                     <span>History</span></a>
             </li>
@@ -189,41 +187,86 @@
 
                     <!-- Inventory Content -->
                     <div class="inventory-header">
-                        <div class="input-group">
-                            <input type="text" class="form-control" placeholder="Search...">
-                            <button class="btn btn-primary"><i class="fas fa-search"></i></button>
-                        </div>
+                        <form method="GET" action="inventory.php" class="input-group">
+                            <input type="text" name="search" class="form-control" placeholder="Search..." value="<?php echo isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>">
+                            <button class="btn btn-primary" type="submit"><i class="fas fa-search"></i></button>
+                        </form>
                         <div class="filter-btn-group">
-                            <button class="btn btn-dark">Add</button>
+                            <a href="inventory.php?filter=all" class="btn btn-dark">Add</a>
                             <span class="filter-label">|</span>
                             <span class="filter-label">Filter:</span>
-                            <button class="btn btn-dark">Tools</button>
-                            <button class="btn btn-dark">Materials</button>
+                            <a href="inventory.php?filter=tools" class="btn btn-dark">Tools</a>
+                            <a href="inventory.php?filter=materials" class="btn btn-dark">Materials</a>
                         </div>
                     </div>
 
                     <div class="row">
-                        <div class="col-md-4">
-                            <div class="inventory-item">
-                                <h5>Tool Name</h5>
-                                <p>ID: 001</p>
-                                <p>Quantity: 10</p>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="inventory-item">
-                                <h5>Material Name</h5>
-                                <p>ID: 002</p>
-                                <p>Quantity: 20</p>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="inventory-item">
-                                <h5>Tool Name</h5>
-                                <p>ID: 003</p>
-                                <p>Quantity: 30</p>
-                            </div>
-                        </div>
+                        <?php
+                        // Database connection
+                        include 'dbconnect.php';
+
+                        // Fetch search query and filter
+                        $search = isset($_GET['search']) ? $_GET['search'] : '';
+                        $filter = isset($_GET['filter']) ? $_GET['filter'] : 'all';
+
+                        // Fetch tools data
+                        if ($filter == 'all' || $filter == 'tools') {
+                            $sql_tools = "SELECT id, name, quantity, price FROM tools";
+                            if ($search) {
+                                $sql_tools .= " WHERE name LIKE '%" . $conn->real_escape_string($search) . "%'";
+                            }
+                            $result_tools = $conn->query($sql_tools);
+
+                            if ($result_tools->num_rows > 0) {
+                                while ($row = $result_tools->fetch_assoc()) {
+                                    echo "<div class='col-md-4'>";
+                                    echo "<div class='inventory-item'>";
+                                    echo "<h5>" . htmlspecialchars($row['name']) . " (Tool)</h5>";
+                                    echo "<p>ID: " . htmlspecialchars($row['id']) . "</p>";
+                                    echo "<p>Quantity: " . htmlspecialchars($row['quantity']) . "</p>";
+                                    echo "<p>Price: ₱" . htmlspecialchars($row['price']) . "</p>";
+                                    echo "</div>";
+                                    echo "</div>";
+                                }
+                            } else if ($filter == 'tools') {
+                                echo "<div class='col-md-12'>";
+                                echo "<div class='inventory-item'>";
+                                echo "<p>No tools found</p>";
+                                echo "</div>";
+                                echo "</div>";
+                            }
+                        }
+
+                        // Fetch materials data
+                        if ($filter == 'all' || $filter == 'materials') {
+                            $sql_materials = "SELECT id, name, quantity, price FROM materials";
+                            if ($search) {
+                                $sql_materials .= " WHERE name LIKE '%" . $conn->real_escape_string($search) . "%'";
+                            }
+                            $result_materials = $conn->query($sql_materials);
+
+                            if ($result_materials->num_rows > 0) {
+                                while ($row = $result_materials->fetch_assoc()) {
+                                    echo "<div class='col-md-4'>";
+                                    echo "<div class='inventory-item'>";
+                                    echo "<h5>" . htmlspecialchars($row['name']) . " (Material)</h5>";
+                                    echo "<p>ID: " . htmlspecialchars($row['id']) . "</p>";
+                                    echo "<p>Quantity: " . htmlspecialchars($row['quantity']) . "</p>";
+                                    echo "<p>Price: ₱" . htmlspecialchars($row['price']) . "</p>";
+                                    echo "</div>";
+                                    echo "</div>";
+                                }
+                            } else if ($filter == 'materials') {
+                                echo "<div class='col-md-12'>";
+                                echo "<div class='inventory-item'>";
+                                echo "<p>No materials found</p>";
+                                echo "</div>";
+                                echo "</div>";
+                            }
+                        }
+
+                        $conn->close();
+                        ?>
                     </div>
 
                 </div>

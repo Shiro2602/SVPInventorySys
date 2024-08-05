@@ -25,7 +25,7 @@
         <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
             <!-- Sidebar - Brand -->
-            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="dashboard.html">
+            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="dashboard.php">
               <div class="sidebar-brand-text mx-3">SERVPRO</div>
             </a>
 
@@ -34,7 +34,7 @@
 
             <!-- Nav Item - Dashboard -->
             <li class="nav-item">
-                <a class="nav-link" href="dashboard.html">
+                <a class="nav-link" href="dashboard.php">
                     <i class="fas fa-fw fa-tachometer-alt"></i>
                     <span>Dashboard</span></a>
             </li>
@@ -43,28 +43,28 @@
 
             <!-- Nav Item - Inventory -->
             <li class="nav-item">
-                <a class="nav-link" href="Inventory.html">
+                <a class="nav-link" href="Inventory.php">
                     <i class="fas fa-fw fa-box"></i>
                     <span>Inventory</span></a>
             </li>
 
             <!-- Nav Item - Status -->
             <li class="nav-item">
-                <a class="nav-link" href="toolstatus.html">
+                <a class="nav-link" href="toolstatus.php">
                     <i class="fas fa-fw fa-ellipsis-h"></i>
                     <span>Status</span></a>
             </li>
 
             <!-- Nav Item - Users -->
             <li class="nav-item">
-                <a class="nav-link" href="users.html">
+                <a class="nav-link" href="users.php">
                     <i class="fas fa-fw fa-user-circle"></i>
                     <span>Users</span></a>
             </li>
 
             <!-- Nav Item - History -->
             <li class="nav-item active">
-                <a class="nav-link" href="history.html">
+                <a class="nav-link" href="history.php">
                     <i class="fas fa-fw fa-history"></i>
                     <span>History</span></a>
             </li>

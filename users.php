@@ -104,7 +104,7 @@
         <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
             <!-- Sidebar - Brand -->
-            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="dashboard.html">
+            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="dashboard.php">
                 <div class="sidebar-brand-text mx-3">SERVPRO</div>
             </a>
 
@@ -113,7 +113,7 @@
 
             <!-- Nav Item - Dashboard -->
             <li class="nav-item">
-                <a class="nav-link" href="dashboard.html">
+                <a class="nav-link" href="dashboard.php">
                     <i class="fas fa-fw fa-tachometer-alt"></i>
                     <span>Dashboard</span></a>
             </li>
@@ -123,28 +123,28 @@
 
             <!-- Nav Item - Inventory -->
             <li class="nav-item">
-                <a class="nav-link" href="inventory.html">
+                <a class="nav-link" href="inventory.php">
                     <i class="fas fa-fw fa-box"></i>
                     <span>Inventory</span></a>
             </li>
 
             <!-- Nav Item - Status -->
             <li class="nav-item">
-                <a class="nav-link" href="toolstatus.html">
+                <a class="nav-link" href="toolstatus.php">
                     <i class="fas fa-fw fa-ellipsis-h"></i>
                     <span>Status</span></a>
             </li>
 
             <!-- Nav Item - Users -->
             <li class="nav-item active">
-                <a class="nav-link" href="users.html">
+                <a class="nav-link" href="users.php">
                     <i class="fas fa-fw fa-user-circle"></i>
                     <span>Users</span></a>
             </li>
             
             <!-- Nav Item - History -->
             <li class="nav-item">
-                <a class="nav-link" href="history.html">
+                <a class="nav-link" href="history.php">
                     <i class="fas fa-fw fa-history"></i>
                     <span>History</span></a>
             </li>
@@ -215,23 +215,49 @@
                                     <th>ID</th>
                                     <th>Image</th>
                                     <th>Username</th>
-                                    <th>Position</th>
+                                    <th>Role</th>
                                     <th>Date Added</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>1</td>
-                                    <td>Image</td>
-                                    <td>Lorem Ipsum</td>
-                                    <td>Lorem Ipsum</td>
-                                    <td>30/07/2024</td>
-                                    <td>
-                                        <button class="btn btn-secondary btn-sm">Edit</button>
-                                        <button class="btn btn-danger btn-sm">Delete</button>
-                                    </td>
-                                </tr>
+                                <?php
+                                include 'dbconnect.php';
+
+                                // Create connection
+                                $conn = new mysqli($servername, $username, $password, $dbname);
+
+                                // Check connection
+                                if ($conn->connect_error) {
+                                    die("Connection failed: " . $conn->connect_error);
+                                }
+
+                                // Fetch users data
+                                $sql = "SELECT * FROM users";
+                                $result = $conn->query($sql);
+
+                                if ($result->num_rows > 0) {
+                                    // Output data of each row
+                                    while($row = $result->fetch_assoc()) {
+                                        echo "<tr>";
+                                        echo "<td>" . $row["id"] . "</td>";
+                                        echo "<td><img src='" . $row["image"] . "' alt='User Image' width='50' height='50'></td>";
+                                        echo "<td>" . $row["username"] . "</td>";
+                                        echo "<td>" . $row["role"] . "</td>";
+                                        echo "<td>" . $row["date_added"] . "</td>";
+                                        echo "<td>
+                                                <button class='btn btn-secondary btn-sm'>Edit</button>
+                                                <button class='btn btn-danger btn-sm'>Delete</button>
+                                              </td>";
+                                        echo "</tr>";
+                                    }
+                                } else {
+                                    echo "<tr><td colspan='6'>No users found</td></tr>";
+                                }
+
+                                // Close the connection
+                                $conn->close();
+                                ?>
                             </tbody>
                         </table>
                     </div>
