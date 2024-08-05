@@ -192,7 +192,7 @@
                             <button class="btn btn-primary" type="submit"><i class="fas fa-search"></i></button>
                         </form>
                         <div class="filter-btn-group">
-                            <a href="inventory.php?filter=all" class="btn btn-dark">Add</a>
+                            <button class="btn btn-dark" data-toggle="modal" data-target="#addItemModal">Add</button>
                             <span class="filter-label">|</span>
                             <span class="filter-label">Filter:</span>
                             <a href="inventory.php?filter=tools" class="btn btn-dark">Tools</a>
@@ -200,16 +200,14 @@
                         </div>
                     </div>
 
-                    <div class="row">
+                    <div class="row" id="inventory-items">
                         <?php
-                        // Database connection
                         include 'dbconnect.php';
 
-                        // Fetch search query and filter
                         $search = isset($_GET['search']) ? $_GET['search'] : '';
                         $filter = isset($_GET['filter']) ? $_GET['filter'] : 'all';
 
-                        // Fetch tools data
+                        // Tools data
                         if ($filter == 'all' || $filter == 'tools') {
                             $sql_tools = "SELECT id, name, quantity, price FROM tools";
                             if ($search) {
@@ -237,7 +235,7 @@
                             }
                         }
 
-                        // Fetch materials data
+                        // Materials data
                         if ($filter == 'all' || $filter == 'materials') {
                             $sql_materials = "SELECT id, name, quantity, price FROM materials";
                             if ($search) {
@@ -270,21 +268,86 @@
                     </div>
 
                 </div>
-                <!-- /.container-fluid -->
 
             </div>
-            <!-- End of Main Content -->
 
         </div>
-        <!-- End of Content Wrapper -->
 
     </div>
-    <!-- End of Page Wrapper -->
 
-    <!-- Bootstrap core JavaScript-->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <!-- Add Item Modal -->
+    <div class="modal fade" id="addItemModal" tabindex="-1" role="dialog" aria-labelledby="addItemModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addItemModalLabel">Add New Item</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="addItemForm">
+                        <div class="form-group">
+                            <label for="item-name">Item Name</label>
+                            <input type="text" class="form-control" id="item-name" name="name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="item-type">Type</label>
+                            <select class="form-control" id="item-type" name="type" required>
+                                <option value="tool">Tool</option>
+                                <option value="material">Material</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="item-quantity">Quantity</label>
+                            <input type="number" class="form-control" id="item-quantity" name="quantity" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="item-price">Price</label>
+                            <input type="number" class="form-control" id="item-price" name="price" step="0.01" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Add Item</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- jQuery and Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.6.0/js/bootstrap.bundle.min.js"></script>
     <!-- SB Admin 2 JavaScript -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/startbootstrap-sb-admin-2/4.1.3/js/sb-admin-2.min.js"></script>
+
+    <!-- Custom JavaScript -->
+    <script>
+        $(document).ready(function() {
+            $('#addItemForm').on('submit', function(event) {
+                event.preventDefault();
+                $.ajax({
+                    url: 'additem.php',
+                    method: 'POST',
+                    data: $(this).serialize(),
+                    success: function(response) {
+                        if (response.success) {
+                            $('#addItemModal').modal('hide');
+                            $('#addItemForm')[0].reset();
+                            var newItem = '<div class="col-md-4">' +
+                                            '<div class="inventory-item">' +
+                                            '<h5>' + response.data.name + ' (' + response.data.type.charAt(0).toUpperCase() + response.data.type.slice(1) + ')</h5>' +
+                                            '<p>ID: ' + response.data.id + '</p>' +
+                                            '<p>Quantity: ' + response.data.quantity + '</p>' +
+                                            '<p>Price: ₱' + response.data.price + '</p>' +
+                                            '</div>' +
+                                          '</div>';
+                            $('#inventory-items').prepend(newItem);
+                        } else {
+                            alert('Failed to add item');
+                        }
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 </html>
