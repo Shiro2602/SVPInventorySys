@@ -202,9 +202,11 @@
                     </div>
 
                     <div class="ml-auto mb-4">
+                    <a href="adduser.php">
                         <button class="btn btn-primary">
                             Add User
                         </button>
+                    </a>
                     </div>
 
                     <!-- Users Table -->
@@ -246,8 +248,8 @@
                                         echo "<td>" . $row["role"] . "</td>";
                                         echo "<td>" . $row["date_added"] . "</td>";
                                         echo "<td>
-                                                <button class='btn btn-secondary btn-sm'>Edit</button>
-                                                <button class='btn btn-danger btn-sm'>Delete</button>
+                                                <button class='btn btn-secondary btn-sm edit-user-btn' data-id='" . $row["id"] . "' data-username='" . $row["username"] . "' data-role='" . $row["role"] . "' data-image='" . $row["image"] . "'>Edit</button>
+                                                <button class='btn btn-danger btn-sm delete-user-btn' data-id='" . $row["id"] . "'>Delete</button>
                                               </td>";
                                         echo "</tr>";
                                     }
@@ -274,6 +276,42 @@
     </div>
     <!-- End of Page Wrapper -->
 
+    <!-- Edit User Modal -->
+    <div class="modal fade" id="editUserModal" tabindex="-1" role="dialog" aria-labelledby="editUserModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editUserModalLabel">Edit User</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="editUserForm">
+                        <input type="hidden" id="edit-user-id" name="id">
+                        <div class="form-group">
+                            <label for="edit-username">Username</label>
+                            <input type="text" class="form-control" id="edit-username" name="username" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="edit-role">Role</label>
+                            <input type="text" class="form-control" id="edit-role" name="role" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="edit-password">Password</label>
+                            <input type="password" class="form-control" id="edit-password" name="password">
+                        </div>
+                        <div class="form-group">
+                            <label for="edit-image">Profile Image</label>
+                            <input type="file" class="form-control" id="edit-image" name="image">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Bootstrap core JavaScript -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.6.0/js/bootstrap.bundle.min.js"></script>
@@ -281,6 +319,76 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
     <!-- Custom scripts for all pages -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/startbootstrap-sb-admin-2/4.1.3/js/sb-admin-2.min.js"></script>
-</body>
 
+    <script>
+        $(document).ready(function() {
+            // Open Edit User Modal
+            $(document).on('click', '.edit-user-btn', function() {
+                var id = $(this).data('id');
+                var username = $(this).data('username');
+                var role = $(this).data('role');
+                var image = $(this).data('image');
+
+                $('#edit-user-id').val(id);
+                $('#edit-username').val(username);
+                $('#edit-role').val(role);
+                $('#editUserModal').modal('show');
+            });
+
+            // Handle Edit User Form submission
+            $('#editUserForm').on('submit', function(e) {
+                e.preventDefault();
+
+                var formData = new FormData(this);
+
+                $.ajax({
+                    url: 'edit_user.php',
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(response) {
+                        if (response.success) {
+                            // Close the modal
+                            $('#editUserModal').modal('hide');
+                            // Reload the page or update the user row
+                            location.reload();
+                        } else {
+                            alert('Failed to update user: ' + response.message);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('AJAX error:', error);
+                        alert('AJAX error: ' + error);
+                    }
+                });
+            });
+
+            // Handle Delete User
+            $(document).on('click', '.delete-user-btn', function() {
+                var id = $(this).data('id');
+
+                if (confirm('Are you sure you want to delete this user?')) {
+                    $.ajax({
+                        url: 'delete_user.php',
+                        type: 'POST',
+                        data: { id: id },
+                        success: function(response) {
+                            if (response.success) {
+                                // Reload the page or remove the user row
+                                location.reload();
+                            } else {
+                                alert('Failed to delete user: ' + response.message);
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            console.error('AJAX error:', error);
+                            alert('AJAX error: ' + error);
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+</body>
 </html>
