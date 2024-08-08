@@ -44,6 +44,13 @@
                     <span>Inventory</span></a>
             </li>
 
+            <!-- Nav Item - Withdraw --> 
+            <li class="nav-item">
+                <a class="nav-link" href="withdraw.php">
+                    <i class="fas fa-fw fa-sign-out-alt"></i>
+                    <span> Inventory Withdrawal</span></a>
+            </li>
+
             <!-- Nav Item - Tool Status -->
             <li class="nav-item">
                 <a class="nav-link" href="toolstatus.php">
@@ -175,34 +182,7 @@
                         </div>
 
                         <!-- Tools in Maintenance Card -->
-                        <div class="col-xl-4 col-md-6 mb-4">
-                            <div class="card border-left-warning shadow h-100 py-2">
-                                <div class="card-body">
-                                    <div class="row no-gutters align-items-center">
-                                        <div class="col mr-2">
-                                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Tools in Maintenance</div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                                <?php
-                                                // Include database connection
-                                                include 'dbconnect.php';
-
-                                                // Query to get the number of tools needing maintenance
-                                                $sql = "SELECT COUNT(*) AS maintenance FROM tools WHERE needs_maintenance = 1";
-                                                $result = $conn->query($sql);
-                                                if ($result->num_rows > 0) {
-                                                    $row = $result->fetch_assoc();
-                                                    echo htmlspecialchars($row['maintenance']);
-                                                } else {
-                                                    echo "0";
-                                                }
-                                                $conn->close();
-                                                ?>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        
 
                     </div>
                 </div>

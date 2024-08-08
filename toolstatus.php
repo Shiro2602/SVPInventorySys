@@ -1,6 +1,15 @@
+<?php
+session_start();
+include 'dbconnect.php';
+
+// Fetch tool status
+$sql = "SELECT * FROM toolstatus WHERE date_returned IS NULL";
+$result = $conn->query($sql);
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -85,9 +94,16 @@
 
             <!-- Nav Item - Inventory -->
             <li class="nav-item">
-                <a class="nav-link" href="Inventory.php">
+                <a class="nav-link" href="inventory.php">
                     <i class="fas fa-fw fa-box"></i>
                     <span>Inventory</span></a>
+            </li>
+
+            <!-- Nav Item - Withdraw --> 
+            <li class="nav-item">
+                <a class="nav-link" href="withdraw.php">
+                    <i class="fas fa-fw fa-sign-out-alt"></i>
+                    <span> Inventory Withdrawal</span></a>
             </li>
 
             <!-- Nav Item - Status -->
@@ -97,22 +113,19 @@
                     <span>Status</span></a>
             </li>
 
-            <!--Nav Item - Users-->
+            <!-- Nav Item - Users -->
             <li class="nav-item">
                 <a class="nav-link" href="users.php">
-                    <i class="fas  fa-fw fa-user-circle"></i>
-                <span>Users</span></a>
+                    <i class="fas fa-fw fa-user-circle"></i>
+                    <span>Users</span></a>
             </li>
             
-            <!--Nav Item - History-->
+            <!-- Nav Item - History -->
             <li class="nav-item">
                 <a class="nav-link" href="history.php">
                     <i class="fas fa-fw fa-history"></i>
-                <span>History</span></a>
+                    <span>History</span></a>
             </li>
-
-            <!-- Divider -->
-            <hr class="sidebar-divider d-none d-md-block">
 
         </ul>
         <!-- End of Sidebar -->
@@ -133,17 +146,14 @@
 
                     <!-- Topbar Navbar -->
                     <ul class="navbar-nav ml-auto">
-
                         <div class="topbar-divider d-none d-sm-block"></div>
-
-                        <!-- Nav Item - User Information -->
                         <li class="nav-item dropdown no-arrow">
-                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <span class="mr-2 d-none d-lg-inline text-gray-600 small">Username</span>
                                 <img class="img-profile rounded-circle" src="https://via.placeholder.com/60">
                             </a>
                         </li>
-
                     </ul>
 
                 </nav>
@@ -159,25 +169,64 @@
 
                     <!-- Card -->
                     <div class="row">
-                        <div class="col-12">
-                            <div class="card mb-4">
-                                <div class="card-header">
-                                    <h5>Technicians: Lorem Ipsum...</h5>
-                                    <small class="text-muted">Taken at: 07/27/2024 8:00AM</small>
-                                </div>
-                                <div class="card-body">
-                                    <div class="details">
-                                        <div class="left">
-                                            <p>Tool 1, Tool 2, Tool 3...</p>
-                                            <p>Remarks: Lorem Ipsum...</p>
+                        <?php if ($result->num_rows > 0): ?>
+                            <?php while($row = $result->fetch_assoc()): ?>
+                                <div class="col-12">
+                                    <div class="card mb-4">
+                                        <div class="card-header">
+                                            <h5>Technician: <?= htmlspecialchars($row['username']) ?></h5>
+                                            <small class="text-muted">Taken at: <?= htmlspecialchars($row['date_taken']) ?></small>
                                         </div>
-                                        <div class="right">
-                                            <button class="btn btn-secondary btn-sm">Mark as Returned</button>
+                                        <div class="card-body">
+                                            <div class="details">
+                                                <div class="left">
+                                                    <p>Tools: 
+                                                        <?php
+                                                        $toolstatus_id = $row['id'];
+                                                        $tools_sql = "SELECT tools.name, toolstatus_tools.quantity FROM toolstatus_tools JOIN tools ON toolstatus_tools.tool_id = tools.id WHERE toolstatus_tools.toolstatus_id = ?";
+                                                        $stmt = $conn->prepare($tools_sql);
+                                                        $stmt->bind_param("i", $toolstatus_id);
+                                                        $stmt->execute();
+                                                        $tools_result = $stmt->get_result();
+                                                        $tools = [];
+                                                        while($tool = $tools_result->fetch_assoc()) {
+                                                            $tools[] = $tool['name'] . " (Quantity: " . $tool['quantity'] . ")";
+                                                        }
+                                                        echo implode(', ', $tools);
+                                                        $stmt->close();
+                                                        ?>
+                                                    </p>
+                                                    <p>Materials: 
+                                                        <?php
+                                                        $materials_sql = "SELECT materials.name, toolstatus_materials.quantity FROM toolstatus_materials JOIN materials ON toolstatus_materials.material_id = materials.id WHERE toolstatus_materials.toolstatus_id = ?";
+                                                        $stmt = $conn->prepare($materials_sql);
+                                                        $stmt->bind_param("i", $toolstatus_id);
+                                                        $stmt->execute();
+                                                        $materials_result = $stmt->get_result();
+                                                        $materials = [];
+                                                        while($material = $materials_result->fetch_assoc()) {
+                                                            $materials[] = $material['name'] . " (Quantity: " . $material['quantity'] . ")";
+                                                        }
+                                                        echo implode(', ', $materials);
+                                                        $stmt->close();
+                                                        ?>
+                                                    </p>
+                                                    <p>Remarks: <?= htmlspecialchars($row['remarks']) ?></p>
+                                                </div>
+                                                <div class="right">
+                                                    <form action="return_tools.php" method="POST">
+                                                        <input type="hidden" name="toolstatus_id" value="<?= htmlspecialchars($row['id']) ?>">
+                                                        <button type="submit" class="btn btn-secondary btn-sm">Mark as Done</button>
+                                                    </form>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
+                            <?php endwhile; ?>
+                        <?php else: ?>
+                            <p>No tools or materials are currently checked out.</p>
+                        <?php endif; ?>
                     </div>
 
                 </div>
@@ -193,7 +242,7 @@
     <!-- End of Page Wrapper -->
 
     <!-- Bootstrap core JavaScript-->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
     <!-- Core plugin JavaScript-->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
@@ -201,5 +250,4 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/startbootstrap-sb-admin-2/4.0.0/js/sb-admin-2.min.js"></script>
 
 </body>
-
 </html>

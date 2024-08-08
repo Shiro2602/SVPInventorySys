@@ -48,6 +48,13 @@
                     <span>Inventory</span></a>
             </li>
 
+            <!-- Nav Item - Withdraw --> 
+            <li class="nav-item">
+                <a class="nav-link" href="withdraw.php">
+                    <i class="fas fa-fw fa-sign-out-alt"></i>
+                    <span> Inventory Withdrawal</span></a>
+            </li>
+
             <!-- Nav Item - Status -->
             <li class="nav-item">
                 <a class="nav-link" href="toolstatus.php">
