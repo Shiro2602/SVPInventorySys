@@ -1,7 +1,5 @@
 <?php
 session_start();
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
 
 include 'dbconnect.php';
 
@@ -21,9 +19,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $user = $result->fetch_assoc();
 
         if (password_verify($password, $user['password'])) {
+            // Store user details in session
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['username'] = $user['username'];
-            header("Location: dashboard.php");
+            $_SESSION['role'] = $user['role']; // Assuming your `users` table has a `role` column
+
+            header("Location: dashboard.php"); // Redirect to the dashboard after login
             exit();
         } else {
             $error_message = "Invalid username or password";
@@ -77,7 +78,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                             <?php echo htmlspecialchars($error_message); ?>
                                         </div>
                                     <?php endif; ?>
-                                    <form class="user" method="POST" action="LOGIN.php">
+                                    <form class="user" method="POST" action="login.php">
                                         <div class="form-group">
                                             <input type="text" class="form-control form-control-user" name="username" aria-describedby="emailHelp" placeholder="Username" required>
                                         </div>

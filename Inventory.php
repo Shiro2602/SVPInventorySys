@@ -1,3 +1,19 @@
+<?php
+session_start();
+
+// Include the database connection file
+include 'dbconnect.php';
+
+// Ensure the user is logged in and the role is set in the session
+if (!isset($_SESSION['username']) || !isset($_SESSION['role'])) {
+    header("Location: login.php"); // Redirect to login page if not logged in
+    exit();
+}
+
+$role = $_SESSION['role']; // Get the user's role from the session
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -121,7 +137,7 @@
                     <span>Inventory</span></a>
             </li>
 
-            <!-- Nav Item - Withdraw --> 
+            <!-- Nav Item - Withdraw -->
             <li class="nav-item">
                 <a class="nav-link" href="withdraw.php">
                     <i class="fas fa-fw fa-sign-out-alt"></i>
@@ -174,7 +190,7 @@
                         <!-- Nav Item - User Information -->
                         <li class="nav-item dropdown no-arrow">
                             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <span class="mr-2 d-none d-lg-inline text-gray-600 small">Username</span>
+                                <span class="mr-2 d-none d-lg-inline text-gray-600 small"><?php echo htmlspecialchars($_SESSION['username']); ?></span>
                                 <img class="img-profile rounded-circle" src="img/undraw_profile.svg">
                             </a>
                         </li>
@@ -199,8 +215,10 @@
                             <button class="btn btn-primary" type="submit"><i class="fas fa-search"></i></button>
                         </form>
                         <div class="filter-btn-group">
-                            <button class="btn btn-dark" data-toggle="modal" data-target="#addItemModal">Add</button>
-                            <span class="filter-label">|</span>
+                            <?php if ($role === 'admin'): ?>
+                                <button class="btn btn-dark" data-toggle="modal" data-target="#addItemModal">Add</button>
+                                <span class="filter-label">|</span>
+                            <?php endif; ?>
                             <span class="filter-label">Filter:</span>
                             <a href="inventory.php?filter=tools" class="btn btn-dark">Tools</a>
                             <a href="inventory.php?filter=materials" class="btn btn-dark">Materials</a>
@@ -209,9 +227,6 @@
 
                     <div class="row" id="inventory-items">
                         <?php
-                        // Database connection
-                        include 'dbconnect.php';
-
                         // Fetch search query and filter
                         $search = isset($_GET['search']) ? $_GET['search'] : '';
                         $filter = isset($_GET['filter']) ? $_GET['filter'] : 'all';
