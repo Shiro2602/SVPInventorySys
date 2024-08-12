@@ -10,20 +10,8 @@ if (!isset($_SESSION['username']) || !isset($_SESSION['role'])) {
     exit();
 }
 
-$user_id = $_SESSION['user_id'];
-
-// Fetch the user's image from the database
-$sql = "SELECT image FROM users WHERE id = ?";
-$stmt = $conn->prepare($sql);
-$stmt->bind_param("i", $user_id);
-$stmt->execute();
-$result = $stmt->get_result();
-$user = $result->fetch_assoc();
-
-// Set a default image if no image is found
-$user_image = $user['image'] ?? 'img/undraw_profile.svg';
-
 $role = $_SESSION['role']; // Get the user's role from the session
+
 ?>
 
 <!DOCTYPE html>
@@ -114,6 +102,12 @@ $role = $_SESSION['role']; // Get the user's role from the session
         .input-group button {
             border-radius: 0 20px 20px 0;
         }
+        .table-responsive td {
+            color: black;
+        }
+        .table-responsive th {
+            color: black;
+        }
     </style>
 </head>
 <body id="page-top">
@@ -203,19 +197,8 @@ $role = $_SESSION['role']; // Get the user's role from the session
                         <li class="nav-item dropdown no-arrow">
                             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <span class="mr-2 d-none d-lg-inline text-gray-600 small"><?php echo htmlspecialchars($_SESSION['username']); ?></span>
-                                <img class="img-profile rounded-circle" src="<?php echo htmlspecialchars($user_image); ?>" alt="User Image">
+                                <img class="img-profile rounded-circle" src="img/undraw_profile.svg">
                             </a>
-                            <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
-                                <a class="dropdown-item" href="profile.php">
-                                    <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
-                                    Profile
-                                </a>
-                                <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="LOGIN.php">
-                                    <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
-                                    Log Out
-                                </a>
-                            </div>
                         </li>
 
                     </ul>
@@ -233,10 +216,10 @@ $role = $_SESSION['role']; // Get the user's role from the session
 
                     <!-- Inventory Content -->
                     <div class="inventory-header">
-                        <form method="GET" action="inventory.php" class="input-group">
-                            <input type="text" name="search" class="form-control" placeholder="Search..." value="<?php echo isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>">
-                            <button class="btn btn-primary" type="submit"><i class="fas fa-search"></i></button>
-                        </form>
+                        <div class="input-group">
+                            <input type="text" class="form-control" placeholder="Search...">
+                            <button class="btn btn-primary"><i class="fas fa-search"></i></button>
+                        </div>
                         <div class="filter-btn-group">
                             <?php if ($role === 'admin'): ?>
                                 <button class="btn btn-dark" data-toggle="modal" data-target="#addItemModal">Add</button>
@@ -250,6 +233,9 @@ $role = $_SESSION['role']; // Get the user's role from the session
 
                     <div class="row" id="inventory-items">
                         <?php
+                        // Database connection
+                        include 'dbconnect.php';
+
                         // Fetch search query and filter
                         $search = isset($_GET['search']) ? $_GET['search'] : '';
                         $filter = isset($_GET['filter']) ? $_GET['filter'] : 'all';
@@ -270,6 +256,9 @@ $role = $_SESSION['role']; // Get the user's role from the session
                                     echo "<p>ID: " . htmlspecialchars($row['id']) . "</p>";
                                     echo "<p>Quantity: " . htmlspecialchars($row['quantity']) . "</p>";
                                     echo "<p>Price: ₱" . htmlspecialchars($row['price']) . "</p>";
+                                    if ($role === 'admin') {
+                                        echo "<button class='btn btn-primary btn-sm edit-item-btn' data-id='" . $row["id"] . "' data-name='" . $row["name"] . "' data-quantity='" . $row["quantity"] . "' data-price='" . $row["price"] . "' data-type='tool'>Edit</button>";
+                                    }
                                     echo "</div>";
                                     echo "</div>";
                                 }
@@ -298,6 +287,9 @@ $role = $_SESSION['role']; // Get the user's role from the session
                                     echo "<p>ID: " . htmlspecialchars($row['id']) . "</p>";
                                     echo "<p>Quantity: " . htmlspecialchars($row['quantity']) . "</p>";
                                     echo "<p>Price: ₱" . htmlspecialchars($row['price']) . "</p>";
+                                    if ($role === 'admin') {
+                                        echo "<button class='btn btn-primary btn-sm edit-item-btn' data-id='" . $row["id"] . "' data-name='" . $row["name"] . "' data-quantity='" . $row["quantity"] . "' data-price='" . $row["price"] . "' data-type='material'>Edit</button>";
+                                    }
                                     echo "</div>";
                                     echo "</div>";
                                 }
@@ -326,45 +318,40 @@ $role = $_SESSION['role']; // Get the user's role from the session
     </div>
     <!-- End of Page Wrapper -->
 
-    <!-- Add Item Modal -->
-    <div class="modal fade" id="addItemModal" tabindex="-1" role="dialog" aria-labelledby="addItemModalLabel" aria-hidden="true">
+    <!-- Edit Item Modal -->
+    <div class="modal fade" id="editItemModal" tabindex="-1" role="dialog" aria-labelledby="editItemModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="addItemModalLabel">Add New Item</h5>
+                    <h5 class="modal-title" id="editItemModalLabel">Edit Item</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
-                    <form id="addItemForm">
+                    <form id="editItemForm">
+                        <input type="hidden" id="edit-item-id" name="id">
                         <div class="form-group">
-                            <label for="item-name">Item Name</label>
-                            <input type="text" class="form-control" id="item-name" name="name" required>
+                            <label for="edit-item-name">Item Name</label>
+                            <input type="text" class="form-control" id="edit-item-name" name="name" required>
                         </div>
                         <div class="form-group">
-                            <label for="item-type">Type</label>
-                            <select class="form-control" id="item-type" name="type" required>
-                                <option value="tool">Tool</option>
-                                <option value="material">Material</option>
-                            </select>
+                            <label for="edit-item-quantity">Quantity</label>
+                            <input type="number" class="form-control" id="edit-item-quantity" name="quantity" required>
                         </div>
                         <div class="form-group">
-                            <label for="item-quantity">Quantity</label>
-                            <input type="number" class="form-control" id="item-quantity" name="quantity" required>
+                            <label for="edit-item-price">Price</label>
+                            <input type="number" class="form-control" id="edit-item-price" name="price" step="0.01" required>
                         </div>
-                        <div class="form-group">
-                            <label for="item-price">Price</label>
-                            <input type="number" class="form-control" id="item-price" name="price" step="0.01" required>
-                        </div>
-                        <button type="submit" class="btn btn-primary">Add Item</button>
+                        <input type="hidden" id="edit-item-type" name="type">
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
                     </form>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- jQuery and Bootstrap JS -->
+    <!-- Bootstrap core JavaScript -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.6.0/js/bootstrap.bundle.min.js"></script>
     <!-- SB Admin 2 JavaScript -->
@@ -372,42 +359,60 @@ $role = $_SESSION['role']; // Get the user's role from the session
 
     <!-- Custom JavaScript -->
     <script>
-        $(document).ready(function() {
-            $('#addItemForm').on('submit', function(event) {
-                event.preventDefault();
-                $.ajax({
-                    url: 'additem.php',
-                    method: 'POST',
-                    data: $(this).serialize(),
-                    dataType: 'json', 
-                    success: function(response) {
-                        console.log(response); 
-                        if (response.success) {
-                            // Close 
-                            $('#addItemModal').modal('hide');
-                            $('#addItemForm')[0].reset();
-                            // Append the new item to the inventory
-                            var newItem = '<div class="col-md-4">' +
-                                            '<div class="inventory-item">' +
-                                            '<h5>' + response.data.name + ' (' + response.data.type.charAt(0).toUpperCase() + response.data.type.slice(1) + ')</h5>' +
-                                            '<p>ID: ' + response.data.id + '</p>' +
-                                            '<p>Quantity: ' + response.data.quantity + '</p>' +
-                                            '<p>Price: ₱' + response.data.price + '</p>' +
-                                            '</div>' +
-                                        '</div>';
-                            $('#inventory-items').prepend(newItem);
-                        } else {
-                            alert('Failed to add item: ' + response.message);
-                        }
-                    },
-                    error: function(xhr, status, error) {
-                        console.error('AJAX error:', error);
-                        console.log(xhr.responseText); 
-                        alert('AJAX error: ' + error);
-                    }
-                });
-            });
+$(document).ready(function() {
+    // Open Edit Item Modal
+    $(document).on('click', '.edit-item-btn', function() {
+        var id = $(this).data('id');
+        var name = $(this).data('name');
+        var quantity = $(this).data('quantity');
+        var price = $(this).data('price');
+        var type = $(this).data('type');
+
+        $('#edit-item-id').val(id);
+        $('#edit-item-name').val(name);
+        $('#edit-item-quantity').val(quantity);
+        $('#edit-item-price').val(price);
+        $('#edit-item-type').val(type);
+        $('#editItemModal').modal('show');
+    });
+
+    // Handle Edit Item Form submission
+    $('#editItemForm').on('submit', function(e) {
+        e.preventDefault();
+
+        var formData = new FormData(this);
+
+        $.ajax({
+            url: 'edititem.php',
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function(response) {
+                console.log(response); // Debugging line
+                if (response.success) {
+                    // Close the modal
+                    $('#editItemModal').modal('hide');
+
+                    // Update the item details on the page without refreshing
+                    var itemId = $('#edit-item-id').val();
+                    var itemType = $('#edit-item-type').val();
+
+                    // Find the card for the updated item
+                    $('button.edit-item-btn[data-id="' + itemId + '"][data-type="' + itemType + '"]').closest('.inventory-item').find('h5').text($('#edit-item-name').val() + ' (' + (itemType.charAt(0).toUpperCase() + itemType.slice(1)) + ')');
+                    $('button.edit-item-btn[data-id="' + itemId + '"][data-type="' + itemType + '"]').closest('.inventory-item').find('p:contains("Quantity")').text('Quantity: ' + $('#edit-item-quantity').val());
+                    $('button.edit-item-btn[data-id="' + itemId + '"][data-type="' + itemType + '"]').closest('.inventory-item').find('p:contains("Price")').text('Price: ₱' + $('#edit-item-price').val());
+                } else {
+                    alert('Failed to update item: ' + response.message);
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('AJAX error:', error);
+                alert('AJAX error: ' + error);
+            }
         });
+    });
+});
     </script>
 
 </body>
