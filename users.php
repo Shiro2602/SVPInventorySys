@@ -3,6 +3,12 @@ session_start();
 
 include 'dbconnect.php';
 
+if (!isset($_SESSION['username']) || $_SESSION['role'] != 'admin') {
+    // If not, redirect to the login page
+    header('Location: login.php');
+    exit;
+}
+
 $user_id = $_SESSION['user_id'];
 
 // Fetch the user's image from the database
