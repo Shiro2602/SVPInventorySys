@@ -22,6 +22,8 @@ $user = $result->fetch_assoc();
 // Set a default image if no image is found
 $user_image = $user['image'] ?? 'img/undraw_profile.svg';
 
+$role = $_SESSION['role']; // Get the user's role from the session
+
 ?>
 
 <!DOCTYPE html>
@@ -82,12 +84,14 @@ $user_image = $user['image'] ?? 'img/undraw_profile.svg';
                     <span>Status</span></a>
             </li>
 
+            <?php if ($role === 'admin'): ?>
             <!-- Nav Item - Users -->
             <li class="nav-item">
                 <a class="nav-link" href="users.php">
-                    <i class="fas fa-fw fa-user-circle"></i>
+                    <i class="fas  fa-fw fa-user-circle"></i>
                     <span>Users</span></a>
             </li>
+            <?php endif; ?>
             
             <!-- Nav Item - History -->
             <li class="nav-item">
