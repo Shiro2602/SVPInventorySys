@@ -217,10 +217,6 @@ $conn->close();
                                 </div>
                             </div>
                         </div>
-
-                        <!-- Tools in Maintenance Card -->
-                        
-
                     </div>
                 </div>
                 <!-- /.container-fluid -->

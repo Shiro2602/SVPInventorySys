@@ -241,7 +241,7 @@ $result = $conn->query($sql);
                                                     <p>Remarks: <?= htmlspecialchars($row['remarks']) ?></p>
                                                 </div>
                                                 <div class="right">
-                                                    <form action="return_tools.php" method="POST">
+                                                    <form action="return_tools.php" method="POST" onsubmit="return confirm('Are you sure you want to mark this tool as done?');">
                                                         <input type="hidden" name="toolstatus_id" value="<?= htmlspecialchars($row['id']) ?>">
                                                         <button type="submit" class="btn btn-secondary btn-sm">Mark as Done</button>
                                                     </form>
