@@ -390,6 +390,7 @@ $role = $_SESSION['role']; // Get the user's role from the session
                 <div class="modal-body">
                     <form id="editItemForm">
                         <input type="hidden" id="edit-item-id" name="id">
+                        <input type="hidden" id="edit-item-type" name="type">
                         <div class="form-group">
                             <label for="edit-item-name">Item Name</label>
                             <input type="text" class="form-control" id="edit-item-name" name="name" required>
@@ -402,8 +403,8 @@ $role = $_SESSION['role']; // Get the user's role from the session
                             <label for="edit-item-price">Price</label>
                             <input type="number" class="form-control" id="edit-item-price" name="price" step="0.01" required>
                         </div>
-                        <input type="hidden" id="edit-item-type" name="type">
                         <button type="submit" class="btn btn-primary">Save Changes</button>
+                        <button type="button" class="btn btn-danger" id="delete-item-btn">Delete Item</button>
                     </form>
                 </div>
             </div>
@@ -416,6 +417,7 @@ $role = $_SESSION['role']; // Get the user's role from the session
     <!-- SB Admin 2 JavaScript -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/startbootstrap-sb-admin-2/4.1.3/js/sb-admin-2.min.js"></script>
 
+    <!-- Custom JavaScript -->
     <!-- Custom JavaScript -->
     <script>
         $(document).ready(function() {
@@ -432,74 +434,62 @@ $role = $_SESSION['role']; // Get the user's role from the session
                 $('#edit-item-quantity').val(quantity);
                 $('#edit-item-price').val(price);
                 $('#edit-item-type').val(type);
+
                 $('#editItemModal').modal('show');
             });
 
             // Handle Edit Item Form submission
-            $('#editItemForm').on('submit', function(e) {
-                e.preventDefault();
-
-                var formData = new FormData(this);
+            $('#editItemForm').on('submit', function(event) {
+                event.preventDefault();
+                var formData = $(this).serialize();
 
                 $.ajax({
                     url: 'edititem.php',
-                    type: 'POST',
+                    method: 'POST',
                     data: formData,
-                    processData: false,
-                    contentType: false,
+                    dataType: 'json',
                     success: function(response) {
                         if (response.success) {
-                            // Close the modal
                             $('#editItemModal').modal('hide');
-                            // Update the item details on the page without refreshing
-                            var itemId = $('#edit-item-id').val();
-                            var itemType = $('#edit-item-type').val();
-
-                            // Find the card for the updated item
-                            $('button.edit-item-btn[data-id="' + itemId + '"][data-type="' + itemType + '"]').closest('.inventory-item').find('h5').text($('#edit-item-name').val() + ' (' + (itemType.charAt(0).toUpperCase() + itemType.slice(1)) + ')');
-                            $('button.edit-item-btn[data-id="' + itemId + '"][data-type="' + itemType + '"]').closest('.inventory-item').find('p:contains("Quantity")').text('Quantity: ' + $('#edit-item-quantity').val());
-                            $('button.edit-item-btn[data-id="' + itemId + '"][data-type="' + itemType + '"]').closest('.inventory-item').find('p:contains("Price")').text('Price: ₱' + $('#edit-item-price').val());
+                            // Update the inventory item details without reloading the page
+                            var itemSelector = '#inventory-items .edit-item-btn[data-id="' + response.data.id + '"]';
+                            $(itemSelector).closest('.inventory-item').find('h5').text(response.data.name + ' (' + response.data.type.charAt(0).toUpperCase() + response.data.type.slice(1) + ')');
+                            $(itemSelector).closest('.inventory-item').find('p:contains("Quantity")').text('Quantity: ' + response.data.quantity);
+                            $(itemSelector).closest('.inventory-item').find('p:contains("Price")').text('Price: ₱' + response.data.price);
                         } else {
                             alert('Failed to update item: ' + response.message);
                         }
                     },
                     error: function(xhr, status, error) {
                         console.error('AJAX error:', error);
+                        console.log(xhr.responseText);
                         alert('AJAX error: ' + error);
                     }
                 });
             });
 
-            // Handle Add Item Form submission
-            $('#addItemForm').on('submit', function(event) {
-                event.preventDefault();
+            // Handle Delete Item action
+            $('#delete-item-btn').on('click', function() {
+                var id = $('#edit-item-id').val();
+                var type = $('#edit-item-type').val();
+
                 $.ajax({
-                    url: 'additem.php',
+                    url: 'deleteitem.php',
                     method: 'POST',
-                    data: $(this).serialize(),
-                    dataType: 'json', 
+                    data: { id: id, type: type },
+                    dataType: 'json',
                     success: function(response) {
                         if (response.success) {
-                            // Close the modal
-                            $('#addItemModal').modal('hide');
-                            $('#addItemForm')[0].reset();
-                            // Append the new item to the inventory
-                            var newItem = '<div class="col-md-4">' +
-                                            '<div class="inventory-item">' +
-                                            '<h5>' + response.data.name + ' (' + response.data.type.charAt(0).toUpperCase() + response.data.type.slice(1) + ')</h5>' +
-                                            '<p>ID: ' + response.data.id + '</p>' +
-                                            '<p>Quantity: ' + response.data.quantity + '</p>' +
-                                            '<p>Price: ₱' + response.data.price + '</p>' +
-                                            (response.data.type == 'tool' ? '<button class="btn btn-secondary btn-sm edit-item-btn" data-id="' + response.data.id + '" data-name="' + response.data.name + '" data-quantity="' + response.data.quantity + '" data-price="' + response.data.price + '" data-type="tool">Edit</button>' : '<button class="btn btn-secondary btn-sm edit-item-btn" data-id="' + response.data.id + '" data-name="' + response.data.name + '" data-quantity="' + response.data.quantity + '" data-price="' + response.data.price + '" data-type="material">Edit</button>') +
-                                            '</div>' +
-                                        '</div>';
-                            $('#inventory-items').prepend(newItem);
+                            $('#editItemModal').modal('hide');
+                            // Remove the inventory item from the list without reloading the page
+                            $('#inventory-items .edit-item-btn[data-id="' + id + '"]').closest('.inventory-item').remove();
                         } else {
-                            alert('Failed to add item: ' + response.message);
+                            alert('Failed to delete item: ' + response.message);
                         }
                     },
                     error: function(xhr, status, error) {
                         console.error('AJAX error:', error);
+                        console.log(xhr.responseText);
                         alert('AJAX error: ' + error);
                     }
                 });
