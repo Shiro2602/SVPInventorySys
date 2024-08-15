@@ -23,7 +23,6 @@ $user = $result->fetch_assoc();
 $user_image = $user['image'] ?? 'img/undraw_profile.svg';
 
 $role = $_SESSION['role']; // Get the user's role from the session
-
 ?>
 
 <!DOCTYPE html>
@@ -44,46 +43,38 @@ $role = $_SESSION['role']; // Get the user's role from the session
 
         <!-- Sidebar -->
         <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
-
             <!-- Sidebar - Brand -->
             <a class="sidebar-brand d-flex align-items-center justify-content-center" href="dashboard.php">
                 <div class="sidebar-brand-text mx-3">SERVPRO</div>
             </a>
-
             <!-- Divider -->
             <hr class="sidebar-divider my-0">
-
             <!-- Nav Item - Dashboard -->
             <li class="nav-item">
                 <a class="nav-link" href="dashboard.php">
                     <i class="fas fa-fw fa-tachometer-alt"></i>
                     <span>Dashboard</span></a>
             </li>
-
             <!-- Divider -->
             <hr class="sidebar-divider">
-
             <!-- Nav Item - Inventory -->
             <li class="nav-item">
                 <a class="nav-link" href="inventory.php">
                     <i class="fas fa-fw fa-box"></i>
                     <span>Inventory</span></a>
             </li>
-
             <!-- Nav Item - Withdraw--> 
             <li class="nav-item active">
                 <a class="nav-link" href="inventory.php">
                     <i class="fas fa-fw fa-sign-out-alt"></i>
                     <span>Inventory Withdrawal</span></a>
             </li>
-
             <!-- Nav Item - Status -->
             <li class="nav-item">
                 <a class="nav-link" href="toolstatus.php">
                     <i class="fas fa-fw fa-ellipsis-h"></i>
                     <span>Status</span></a>
             </li>
-
             <?php if ($role === 'admin'): ?>
             <!-- Nav Item - Users -->
             <li class="nav-item">
@@ -92,14 +83,12 @@ $role = $_SESSION['role']; // Get the user's role from the session
                     <span>Users</span></a>
             </li>
             <?php endif; ?>
-            
             <!-- Nav Item - History -->
             <li class="nav-item">
                 <a class="nav-link" href="history.php">
                     <i class="fas fa-fw fa-history"></i>
                     <span>History</span></a>
             </li>
-
         </ul>
         <!-- End of Sidebar -->
 
@@ -111,12 +100,10 @@ $role = $_SESSION['role']; // Get the user's role from the session
 
                 <!-- Topbar -->
                 <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
-
                     <!-- Sidebar Toggle (Topbar) -->
                     <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
                         <i class="fa fa-bars"></i>
                     </button>
-
                     <!-- Topbar Navbar -->
                     <ul class="navbar-nav ml-auto">
                         <div class="topbar-divider d-none d-sm-block"></div>
@@ -138,7 +125,6 @@ $role = $_SESSION['role']; // Get the user's role from the session
                             </div>
                         </li>
                     </ul>
-
                 </nav>
                 <!-- End of Topbar -->
 
@@ -150,12 +136,27 @@ $role = $_SESSION['role']; // Get the user's role from the session
                         <h1 class="h3 mb-0 text-gray-800">Withdraw Tools and Materials</h1>
                     </div>
 
+                    <!-- Search Bar -->
+                    <div class="mb-4">
+                        <input type="text" id="searchInput" class="form-control" placeholder="Search tools or materials...">
+                    </div>
+
                     <!-- Withdraw Form -->
                     <form action="withdraw_action.php" method="POST">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <h4>Tools</h4>
-                                <div class="form-group">
+                        <!-- Tabs -->
+                        <ul class="nav nav-tabs" id="myTab" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link active" id="tools-tab" data-toggle="tab" href="#tools" role="tab" aria-controls="tools" aria-selected="true">Tools</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="materials-tab" data-toggle="tab" href="#materials" role="tab" aria-controls="materials" aria-selected="false">Materials</a>
+                            </li>
+                        </ul>
+
+                        <div class="tab-content" id="myTabContent">
+                            <!-- Tools Tab -->
+                            <div class="tab-pane fade show active" id="tools" role="tabpanel" aria-labelledby="tools-tab">
+                                <div id="toolsList">
                                     <?php if ($tools_result->num_rows > 0): ?>
                                         <?php while($tool = $tools_result->fetch_assoc()): ?>
                                             <div class="form-check">
@@ -169,9 +170,10 @@ $role = $_SESSION['role']; // Get the user's role from the session
                                     <?php endif; ?>
                                 </div>
                             </div>
-                            <div class="col-md-6">
-                                <h4>Materials</h4>
-                                <div class="form-group">
+
+                            <!-- Materials Tab -->
+                            <div class="tab-pane fade" id="materials" role="tabpanel" aria-labelledby="materials-tab">
+                                <div id="materialsList">
                                     <?php if ($materials_result->num_rows > 0): ?>
                                         <?php while($material = $materials_result->fetch_assoc()): ?>
                                             <div class="form-check">
@@ -186,7 +188,9 @@ $role = $_SESSION['role']; // Get the user's role from the session
                                 </div>
                             </div>
                         </div>
-                        <div class="form-group">
+
+                        <!-- Remarks and Submit -->
+                        <div class="form-group mt-4">
                             <label for="remarks">Remarks</label>
                             <textarea class="form-control" name="remarks" id="remarks" rows="3"></textarea>
                         </div>
@@ -212,6 +216,25 @@ $role = $_SESSION['role']; // Get the user's role from the session
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
     <!-- Custom scripts for all pages-->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/startbootstrap-sb-admin-2/4.1.3/js/sb-admin-2.min.js"></script>
+
+    <!-- Search Functionality -->
+    <script>
+        document.getElementById('searchInput').addEventListener('input', function() {
+            let filter = this.value.toLowerCase();
+            let tools = document.querySelectorAll('#toolsList .form-check');
+            let materials = document.querySelectorAll('#materialsList .form-check');
+
+            tools.forEach(function(tool) {
+                let text = tool.textContent.toLowerCase();
+                tool.style.display = text.includes(filter) ? '' : 'none';
+            });
+
+            materials.forEach(function(material) {
+                let text = material.textContent.toLowerCase();
+                material.style.display = text.includes(filter) ? '' : 'none';
+            });
+        });
+    </script>
 
 </body>
 </html>
