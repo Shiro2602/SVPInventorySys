@@ -183,6 +183,8 @@ $role = $_SESSION['role']; // Get the user's role from the session
                     <i class="fas fa-fw fa-history"></i>
                     <span>History</span></a>
             </li>
+            
+            <hr class="sidebar-divider d-none d-md-block">
 
         </ul>
         <!-- End of Sidebar -->

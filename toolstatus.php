@@ -144,6 +144,8 @@ $result = $conn->query($sql);
                     <span>History</span></a>
             </li>
 
+            <hr class="sidebar-divider d-none d-md-block">
+
         </ul>
         <!-- End of Sidebar -->
 
