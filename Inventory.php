@@ -496,6 +496,40 @@ $role = $_SESSION['role']; // Get the user's role from the session
                     }
                 });
             });
+            $('#addItemForm').on('submit', function(event) {
+                event.preventDefault();
+                $.ajax({
+                    url: 'additem.php',
+                    method: 'POST',
+                    data: $(this).serialize(),
+                    dataType: 'json', 
+                    success: function(response) {
+                        console.log(response); 
+                        if (response.success) {
+                            // Close 
+                            $('#addItemModal').modal('hide');
+                            $('#addItemForm')[0].reset();
+                            // Append the new item to the inventory
+                            var newItem = '<div class="col-md-4">' +
+                                            '<div class="inventory-item">' +
+                                            '<h5>' + response.data.name + ' (' + response.data.type.charAt(0).toUpperCase() + response.data.type.slice(1) + ')</h5>' +
+                                            '<p>ID: ' + response.data.id + '</p>' +
+                                            '<p>Quantity: ' + response.data.quantity + '</p>' +
+                                            '<p>Price: ₱' + response.data.price + '</p>' +
+                                            '</div>' +
+                                        '</div>';
+                            $('#inventory-items').prepend(newItem);
+                        } else {
+                            alert('Failed to add item: ' + response.message);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('AJAX error:', error);
+                        console.log(xhr.responseText); 
+                        alert('AJAX error: ' + error);
+                    }
+                });
+            });
         });
     </script>
 
