@@ -17,6 +17,8 @@ $stmt->execute();
 $result = $stmt->get_result();
 $user = $result->fetch_assoc();
 
+$role = $_SESSION['role'];
+
 $stmt->close();
 $conn->close();
 ?>
@@ -81,12 +83,14 @@ $conn->close();
                     <span>Status</span></a>
             </li>
 
+            <?php if ($role === 'admin'): ?>
             <!-- Nav Item - Users -->
             <li class="nav-item">
                 <a class="nav-link" href="users.php">
                     <i class="fas  fa-fw fa-user-circle"></i>
                     <span>Users</span></a>
             </li>
+            <?php endif; ?>
 
             <!-- Nav Item - History -->
             <li class="nav-item">
