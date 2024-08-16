@@ -4,6 +4,7 @@ include 'dbconnect.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $toolstatus_id = $_POST['toolstatus_id'];
+    date_default_timezone_set('Asia/Manila');
     $date_returned = date('Y-m-d H:i:s');
 
     // Update toolstatus table to mark as returned

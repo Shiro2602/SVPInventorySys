@@ -136,7 +136,7 @@ $role = $_SESSION['role']; // Get the user's role from the session
 
                     <!-- Page Heading -->
                     <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                        <h1 class="h3 mb-0 text-gray-800">Withdraw Tools and Materials</h1>
+                        <h1 class="h3 mb-0 text-gray-900">Withdraw Tools and Materials</h1>
                     </div>
 
                     <!-- Search Bar -->
@@ -164,7 +164,7 @@ $role = $_SESSION['role']; // Get the user's role from the session
                                         <?php while($tool = $tools_result->fetch_assoc()): ?>
                                             <div class="form-check">
                                                 <input class="form-check-input" type="checkbox" name="tools[]" value="<?= $tool['id'] ?>">
-                                                <label class="form-check-label"><?= $tool['name'] ?> (Available: <?= $tool['quantity'] ?>)</label>
+                                                <label class="form-check-label" style="color: black"><?= $tool['name'] ?> (Available: <?= $tool['quantity'] ?>)</label>
                                                 <input type="number" name="tool_quantities[<?= $tool['id'] ?>]" class="form-control" placeholder="Quantity" min="1" max="<?= $tool['quantity'] ?>">
                                             </div>
                                         <?php endwhile; ?>
@@ -181,7 +181,7 @@ $role = $_SESSION['role']; // Get the user's role from the session
                                         <?php while($material = $materials_result->fetch_assoc()): ?>
                                             <div class="form-check">
                                                 <input class="form-check-input" type="checkbox" name="materials[]" value="<?= $material['id'] ?>">
-                                                <label class="form-check-label"><?= $material['name'] ?> (Available: <?= $material['quantity'] ?>)</label>
+                                                <label class="form-check-label" style="color: black"><?= $material['name'] ?> (Available: <?= $material['quantity'] ?>)</label>
                                                 <input type="number" name="material_quantities[<?= $material['id'] ?>]" class="form-control" placeholder="Quantity" min="1" max="<?= $material['quantity'] ?>">
                                             </div>
                                         <?php endwhile; ?>
@@ -194,7 +194,7 @@ $role = $_SESSION['role']; // Get the user's role from the session
 
                         <!-- Remarks and Submit -->
                         <div class="form-group mt-4">
-                            <label for="remarks">Remarks</label>
+                            <label for="remarks" style="color: black">Remarks</label>
                             <textarea class="form-control" name="remarks" id="remarks" rows="3"></textarea>
                         </div>
                         <button type="submit" class="btn btn-primary">Withdraw</button>
@@ -241,3 +241,4 @@ $role = $_SESSION['role']; // Get the user's role from the session
 
 </body>
 </html>
+

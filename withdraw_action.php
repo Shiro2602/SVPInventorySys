@@ -9,14 +9,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $material_quantities = isset($_POST['material_quantities']) ? $_POST['material_quantities'] : [];
     $remarks = $_POST['remarks'];
     $username = isset($_SESSION['username']) ? $_SESSION['username'] : null;
+    date_default_timezone_set('Asia/Manila');
     $date_taken = date('Y-m-d H:i:s');
 
     if ($username === null) {
-        // Handle the error appropriately, e.g., redirect to login page or show an error message
         die("User is not logged in.");
     }
 
-    // Insert into toolstatus table
     $sql = "INSERT INTO toolstatus (username, remarks, date_taken) VALUES (?, ?, ?)";
     $stmt = $conn->prepare($sql);
     if (!$stmt) {
@@ -27,10 +26,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $toolstatus_id = $stmt->insert_id;
     $stmt->close();
 
-    // Process tools
     foreach ($tools as $tool_id) {
         $quantity = $tool_quantities[$tool_id];
-        // Update tools quantity
         $sql = "UPDATE tools SET quantity = quantity - ? WHERE id = ?";
         $stmt = $conn->prepare($sql);
         if (!$stmt) {
@@ -40,7 +37,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $stmt->execute();
         $stmt->close();
 
-        // Insert into toolstatus_tools
         $sql = "INSERT INTO toolstatus_tools (toolstatus_id, tool_id, quantity) VALUES (?, ?, ?)";
         $stmt = $conn->prepare($sql);
         if (!$stmt) {
@@ -51,10 +47,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $stmt->close();
     }
 
-    // Process materials
     foreach ($materials as $material_id) {
         $quantity = $material_quantities[$material_id];
-        // Update materials quantity
+
         $sql = "UPDATE materials SET quantity = quantity - ? WHERE id = ?";
         $stmt = $conn->prepare($sql);
         if (!$stmt) {
@@ -64,7 +59,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $stmt->execute();
         $stmt->close();
 
-        // Insert into toolstatus_materials
         $sql = "INSERT INTO toolstatus_materials (toolstatus_id, material_id, quantity) VALUES (?, ?, ?)";
         $stmt = $conn->prepare($sql);
         if (!$stmt) {
