@@ -19,12 +19,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $user = $result->fetch_assoc();
 
         if (password_verify($password, $user['password'])) {
-            // Store user details in session
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['username'] = $user['username'];
-            $_SESSION['role'] = $user['role']; // Assuming your `users` table has a `role` column
+            $_SESSION['role'] = $user['role']; 
 
-            header("Location: dashboard.php"); // Redirect to the dashboard after login
+            header("Location: dashboard.php"); 
             exit();
         } else {
             $error_message = "Invalid username or password";
@@ -56,14 +55,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     <div class="container">
 
-        <!-- Outer Row -->
         <div class="row justify-content-center">
 
             <div class="col-xl-10 col-lg-12 col-md-9">
 
                 <div class="card o-hidden border-0 shadow-lg my-5">
                     <div class="card-body p-0">
-                        <!-- Nested Row within Card Body -->
                         <div class="row">
                             <div class="col-lg-6 d-none d-lg-block">
                                 <img src="svpimg.png" alt="ServPro Image" class="img-fluid">
