@@ -20,7 +20,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Check if image is uploaded
     if ($image && $image['tmp_name']) {
-        $imagePath = $uploadDir . '/' . basename($image['name']);
+        $imagePath = $uploadDir . '/' . uniqid() . '_' . $image['name'];
         if (move_uploaded_file($image['tmp_name'], $imagePath)) {
             // Hash the password
             $hashed_password = password_hash($password, PASSWORD_DEFAULT);
