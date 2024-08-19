@@ -22,10 +22,17 @@ $user = $result->fetch_assoc();
 // Set a default image if no image is found
 $user_image = $user['image'] ?? 'img/undraw_profile.svg';
 
+// Handle search query
+$search = $_GET['search'] ?? '';
+$search = $conn->real_escape_string($search);
+
+// Adjust the query to include search functionality
+$sql = "SELECT * FROM users WHERE username LIKE '%$search%' OR role LIKE '%$search%'";
+$result = $conn->query($sql);
+
 $stmt->close();
 $conn->close();
 ?>
-
 
 <!DOCTYPE html>
 <html lang="en">
@@ -239,14 +246,16 @@ $conn->close();
 
                     <!-- Search and Add Button -->
                     <div class="d-flex align-items-center mb-4">
-                        <div class="input-group">
-                            <input type="text" class="form-control" placeholder="Search...">
-                            <div class="input-group-append">
-                                <button class="btn btn-primary" type="button">
-                                    <i class="fas fa-search"></i>
-                                </button>
+                        <form action="users.php" method="GET">
+                            <div class="input-group">
+                                <input type="text" class="form-control" name="search" placeholder="Search..." value="<?php echo htmlspecialchars($search); ?>">
+                                <div class="input-group-append">
+                                    <button class="btn btn-primary" type="submit">
+                                        <i class="fas fa-search"></i>
+                                    </button>
+                                </div>
                             </div>
-                        </div>
+                        </form>
                     </div>
 
                     <div class="ml-auto mb-4">
@@ -259,7 +268,7 @@ $conn->close();
 
                     <!-- Users Table -->
                     <div class="table-responsive">
-                        <table class="table table-bordered">
+                        <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                             <thead>
                                 <tr>
                                     <th>ID</th>
@@ -272,7 +281,6 @@ $conn->close();
                             </thead>
                             <tbody>
                                 <?php
-                                include 'dbconnect.php';
 
                                 // Create connection
                                 $conn = new mysqli($servername, $username, $password, $dbname);
@@ -283,7 +291,7 @@ $conn->close();
                                 }
 
                                 // Fetch users data
-                                $sql = "SELECT * FROM users";
+                                $sql = "SELECT * FROM users WHERE username LIKE '%$search%' OR role LIKE '%$search%'";
                                 $result = $conn->query($sql);
 
                                 if ($result->num_rows > 0) {
