@@ -12,7 +12,6 @@ $username = $_POST['username'];
 $password = $_POST['password'];
 $image = $_FILES['image'];
 
-// Handle password update
 $password_query = "";
 $params = [$username, $user_id]; 
 
@@ -22,7 +21,6 @@ if (!empty($password)) {
     $params = [$username, $password_hashed, $user_id];
 }
 
-// image upload
 $image_query = "";
 if (isset($image) && $image['error'] == 0) {
     $target_dir = "uploads/";
@@ -33,12 +31,11 @@ if (isset($image) && $image['error'] == 0) {
     }
 }
 
-// Construct the SQL query
 $sql = "UPDATE users SET username = ? {$password_query} {$image_query} WHERE id = ?";
 $stmt = $conn->prepare($sql);
 
 // Bind parameters dynamically based on whether the password and/or image are included
-$types = str_repeat('s', count($params) - 1) . 'i'; // All string types except last (user_id)
+$types = str_repeat('s', count($params) - 1) . 'i'; 
 $stmt->bind_param($types, ...$params);
 
 if ($stmt->execute()) {

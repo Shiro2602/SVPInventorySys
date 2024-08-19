@@ -2,10 +2,8 @@
 session_start();
 include 'dbconnect.php';
 
-// Assuming the user ID is stored in the session
 $user_id = $_SESSION['user_id'];
 
-// Fetch the user's image from the database
 $sql = "SELECT image FROM users WHERE id = ?";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("i", $user_id);
@@ -13,10 +11,9 @@ $stmt->execute();
 $result = $stmt->get_result();
 $user = $result->fetch_assoc();
 
-// Set a default image if no image is found
 $user_image = $user['image'] ?? 'img/undraw_profile.svg';
 
-$role = $_SESSION['role']; //Fetch le user role
+$role = $_SESSION['role'];
 
 $stmt->close();
 $conn->close();
@@ -43,18 +40,15 @@ $conn->close();
 
 <body id="page-top">
 
-    <!-- Page Wrapper -->
     <div id="wrapper">
 
         <!-- Sidebar -->
         <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
-            <!-- Sidebar - Brand -->
             <a class="sidebar-brand d-flex align-items-center justify-content-center" href="dashboard.php">
               <div class="sidebar-brand-text mx-3">SERVPRO</div>
             </a>
 
-            <!-- Divider -->
             <hr class="sidebar-divider my-0">
 
             <!-- Nav Item - Dashboard -->
@@ -108,7 +102,6 @@ $conn->close();
         </ul>
         <!-- End of Sidebar -->
 
-        <!-- Content Wrapper -->
         <div id="content-wrapper" class="d-flex flex-column">
 
             <!-- Main Content -->
@@ -117,12 +110,12 @@ $conn->close();
                 <!-- Topbar -->
                 <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
 
-                    <!-- Sidebar Toggle (Topbar) -->
+                    <!-- Sidebar Toggle -->
                     <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
                         <i class="fa fa-bars"></i>
                     </button>
 
-                    <!-- Topbar Navbar -->
+                    <!-- Dropdown -->
                     <ul class="navbar-nav ml-auto">
                         <div class="topbar-divider d-none d-sm-block"></div>
                         <li class="nav-item dropdown no-arrow">
@@ -147,13 +140,10 @@ $conn->close();
                 </nav>
                 <!-- End of Topbar -->
 
-                <!-- Begin Page Content -->
                 <div class="container-fluid">
 
-                    <!-- Page Heading -->
                     <h1 class="h3 mb-4 text-gray-800">History</h1>
 
-                    <!-- Content Row -->
                     <div class="row">
 
                         <div class="col-lg-12 mb-4">
@@ -188,19 +178,14 @@ $conn->close();
                         </div>
 
                     </div>
-                    <!-- End Content Row -->
 
                 </div>
-                <!-- End Page Content -->
 
             </div>
-            <!-- End Main Content -->
 
         </div>
-        <!-- End Content Wrapper -->
 
     </div>
-    <!-- End Page Wrapper -->
 
     <!-- jQuery and Bootstrap JS -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>

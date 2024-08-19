@@ -2,10 +2,8 @@
 session_start();
 include 'dbconnect.php';
 
-// Assuming the user ID is stored in the session
 $user_id = $_SESSION['user_id'];
 
-// Fetch the user's image from the database
 $sql = "SELECT image FROM users WHERE id = ?";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("i", $user_id);
@@ -13,10 +11,9 @@ $stmt->execute();
 $result = $stmt->get_result();
 $user = $result->fetch_assoc();
 
-// Set a default image if no image is found
 $user_image = $user['image'] ?? 'img/undraw_profile.svg';
 
-$role = $_SESSION['role']; // Get the user's role from the session
+$role = $_SESSION['role']; 
 
 $stmt->close();
 $conn->close();
@@ -37,7 +34,6 @@ $conn->close();
 
 <body id="page-top">
 
-    <!-- Page Wrapper -->
     <div id="wrapper">
 
         <!-- Sidebar -->
@@ -103,16 +99,14 @@ $conn->close();
         </ul>
         <!-- End of Sidebar -->
 
-        <!-- Content Wrapper -->
         <div id="content-wrapper" class="d-flex flex-column">
 
-            <!-- Main Content -->
             <div id="content">
 
                 <!-- Topbar -->
                 <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
 
-                    <!-- Sidebar Toggle (Topbar) -->
+                    <!-- Sidebar Toggle -->
                     <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
                         <i class="fa fa-bars"></i>
                     </button>
@@ -122,7 +116,7 @@ $conn->close();
 
                         <div class="topbar-divider d-none d-sm-block"></div>
 
-                        <!-- Nav Item - User Information -->
+                        <!-- Nav Item - User Information/Dropdown -->
                         <li class="nav-item dropdown no-arrow">
                             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <span class="mr-2 d-none d-lg-inline text-gray-600 small"><?php echo htmlspecialchars($_SESSION['username']); ?></span>
@@ -149,15 +143,13 @@ $conn->close();
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
 
-                    <!-- Page Heading -->
                     <div class="d-sm-flex align-items-center justify-content-between mb-4">
                         <h1 class="h3 mb-0 text-gray-800">Inventory Dashboard</h1>
                     </div>
 
-                    <!-- Content Row -->
                     <div class="row">
 
-                        <!-- Total Tools Card -->
+                        <!-- Tool Card -->
                         <div class="col-xl-4 col-md-6 mb-4">
                             <div class="card border-left-primary shadow h-100 py-2">
                                 <div class="card-body">
@@ -166,10 +158,7 @@ $conn->close();
                                             <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Total Tools</div>
                                             <div class="h5 mb-0 font-weight-bold text-gray-800">
                                                 <?php
-                                                // Include database connection
-                                                include 'dbconnect.php';
 
-                                                // Query to get the total number of tools
                                                 $sql = "SELECT COUNT(*) AS total FROM tools";
                                                 $result = $conn->query($sql);
                                                 if ($result->num_rows > 0) {
@@ -187,7 +176,7 @@ $conn->close();
                             </div>
                         </div>
 
-                        <!-- Tools in Use Card -->
+                        <!-- Tool in Use Card-->
                         <div class="col-xl-4 col-md-6 mb-4">
                             <div class="card border-left-danger shadow h-100 py-2">
                                 <div class="card-body">
@@ -196,10 +185,7 @@ $conn->close();
                                             <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">Tools in Use</div>
                                             <div class="h5 mb-0 font-weight-bold text-gray-800">
                                                 <?php
-                                                // Include database connection
-                                                include 'dbconnect.php';
 
-                                                // Query to get the sum of tools in use
                                                 $sql = "SELECT SUM(in_use) AS in_use_sum FROM tools";
                                                 $result = $conn->query($sql);
                                                 if ($result->num_rows > 0) {
@@ -218,16 +204,12 @@ $conn->close();
                         </div>
                     </div>
                 </div>
-                <!-- /.container-fluid -->
 
             </div>
-            <!-- End of Main Content -->
 
         </div>
-        <!-- End of Content Wrapper -->
 
     </div>
-    <!-- End of Page Wrapper -->
 
     <!-- jQuery and Bootstrap JS -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>

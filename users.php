@@ -4,14 +4,12 @@ session_start();
 include 'dbconnect.php';
 
 if (!isset($_SESSION['username']) || $_SESSION['role'] != 'admin') {
-    // If not, redirect to the login page
     header('Location: login.php');
     exit;
 }
 
 $user_id = $_SESSION['user_id'];
 
-// Fetch the user's image from the database
 $sql = "SELECT image FROM users WHERE id = ?";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("i", $user_id);
@@ -19,14 +17,11 @@ $stmt->execute();
 $result = $stmt->get_result();
 $user = $result->fetch_assoc();
 
-// Set a default image if no image is found
 $user_image = $user['image'] ?? 'img/undraw_profile.svg';
 
-// Handle search query
 $search = $_GET['search'] ?? '';
 $search = $conn->real_escape_string($search);
 
-// Adjust the query to include search functionality
 $sql = "SELECT * FROM users WHERE username LIKE '%$search%' OR role LIKE '%$search%'";
 $result = $conn->query($sql);
 
@@ -133,18 +128,15 @@ $conn->close();
 
 <body id="page-top">
 
-    <!-- Page Wrapper -->
     <div id="wrapper">
 
         <!-- Sidebar -->
         <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
-            <!-- Sidebar - Brand -->
             <a class="sidebar-brand d-flex align-items-center justify-content-center" href="dashboard.php">
                 <div class="sidebar-brand-text mx-3">SERVPRO</div>
             </a>
 
-            <!-- Divider -->
             <hr class="sidebar-divider my-0">
 
             <!-- Nav Item - Dashboard -->
@@ -154,7 +146,6 @@ $conn->close();
                     <span>Dashboard</span></a>
             </li>
 
-            <!-- Divider -->
             <hr class="sidebar-divider">
 
             <!-- Nav Item - Inventory -->
@@ -197,7 +188,6 @@ $conn->close();
         </ul>
         <!-- End of Sidebar -->
 
-        <!-- Content Wrapper -->
         <div id="content-wrapper" class="d-flex flex-column">
 
             <!-- Main Content -->
@@ -206,7 +196,7 @@ $conn->close();
                 <!-- Topbar -->
                 <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
 
-                    <!-- Sidebar Toggle (Topbar) -->
+                    <!-- Sidebar Toggle  -->
                     <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
                         <i class="fa fa-bars"></i>
                     </button>
@@ -236,10 +226,8 @@ $conn->close();
                 </nav>
                 <!-- End of Topbar -->
 
-                <!-- Begin Page Content -->
                 <div class="container-fluid">
 
-                    <!-- Page Heading -->
                     <div class="d-sm-flex align-items-center justify-content-between mb-4">
                         <h1 class="h3 mb-0 text-gray-800">Users</h1>
                     </div>
@@ -282,20 +270,16 @@ $conn->close();
                             <tbody>
                                 <?php
 
-                                // Create connection
                                 $conn = new mysqli($servername, $username, $password, $dbname);
 
-                                // Check connection
                                 if ($conn->connect_error) {
                                     die("Connection failed: " . $conn->connect_error);
                                 }
 
-                                // Fetch users data
                                 $sql = "SELECT * FROM users WHERE username LIKE '%$search%' OR role LIKE '%$search%'";
                                 $result = $conn->query($sql);
 
                                 if ($result->num_rows > 0) {
-                                    // Output data of each row
                                     while($row = $result->fetch_assoc()) {
                                         echo "<tr>";
                                         echo "<td>" . $row["id"] . "</td>";
@@ -313,7 +297,6 @@ $conn->close();
                                     echo "<tr><td colspan='6'>No users found</td></tr>";
                                 }
 
-                                // Close the connection
                                 $conn->close();
                                 ?>
                             </tbody>
@@ -321,16 +304,12 @@ $conn->close();
                     </div>
 
                 </div>
-                <!-- /.container-fluid -->
 
             </div>
-            <!-- End of Main Content -->
 
         </div>
-        <!-- End of Content Wrapper -->
 
     </div>
-    <!-- End of Page Wrapper -->
 
     <!-- Edit User Modal -->
     <div class="modal fade" id="editUserModal" tabindex="-1" role="dialog" aria-labelledby="editUserModalLabel" aria-hidden="true">
@@ -378,7 +357,7 @@ $conn->close();
 
     <script>
         $(document).ready(function() {
-            // Open Edit User Modal
+            // Edit User Modal
             $(document).on('click', '.edit-user-btn', function() {
                 var id = $(this).data('id');
                 var username = $(this).data('username');
@@ -391,7 +370,6 @@ $conn->close();
                 $('#editUserModal').modal('show');
             });
 
-            // Handle Edit User Form submission
             $('#editUserForm').on('submit', function(e) {
                 e.preventDefault();
 
@@ -405,9 +383,7 @@ $conn->close();
                     contentType: false,
                     success: function(response) {
                         if (response.success) {
-                            // Close the modal
                             $('#editUserModal').modal('hide');
-                            // Reload the page or update the user row
                             location.reload();
                         } else {
                             alert('Failed to update user: ' + response.message);
@@ -420,7 +396,7 @@ $conn->close();
                 });
             });
 
-            // Handle Delete User
+            // Delete User
             $(document).on('click', '.delete-user-btn', function() {
                 var id = $(this).data('id');
 
@@ -431,7 +407,6 @@ $conn->close();
                         data: { id: id },
                         success: function(response) {
                             if (response.success) {
-                                // Reload the page or remove the user row
                                 location.reload();
                             } else {
                                 alert('Failed to delete user: ' + response.message);

@@ -4,7 +4,6 @@ include 'dbconnect.php';
 
 $user_id = $_SESSION['user_id'];
 
-// Fetch the user's image from the database
 $sql = "SELECT image FROM users WHERE id = ?";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("i", $user_id);
@@ -12,12 +11,10 @@ $stmt->execute();
 $result = $stmt->get_result();
 $user = $result->fetch_assoc();
 
-// Set a default image if no image is found
 $user_image = $user['image'] ?? 'img/undraw_profile.svg';
 
-$role = $_SESSION['role']; // Get the user's role from the session
+$role = $_SESSION['role'];
 
-// Fetch tool status
 $sql = "SELECT * FROM toolstatus WHERE date_returned IS NULL";
 $result = $conn->query($sql);
 
@@ -83,18 +80,15 @@ $result = $conn->query($sql);
 
 <body id="page-top">
 
-    <!-- Page Wrapper -->
     <div id="wrapper">
 
         <!-- Sidebar -->
         <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
-            <!-- Sidebar - Brand -->
             <a class="sidebar-brand d-flex align-items-center justify-content-center" href="dashboard.php">
                 <div class="sidebar-brand-text mx-3">SERVPRO</div>
             </a>
 
-            <!-- Divider -->
             <hr class="sidebar-divider my-0">
 
             <!-- Nav Item - Dashboard -->
@@ -104,7 +98,6 @@ $result = $conn->query($sql);
                     <span>Dashboard</span></a>
             </li>
 
-            <!-- Divider -->
             <hr class="sidebar-divider">
 
             <!-- Nav Item - Inventory -->
@@ -149,7 +142,6 @@ $result = $conn->query($sql);
         </ul>
         <!-- End of Sidebar -->
 
-        <!-- Content Wrapper -->
         <div id="content-wrapper" class="d-flex flex-column">
 
             <!-- Main Content -->
@@ -158,7 +150,7 @@ $result = $conn->query($sql);
                 <!-- Topbar -->
                 <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
 
-                    <!-- Sidebar Toggle (Topbar) -->
+                    <!-- Sidebar Toggle  -->
                     <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
                         <i class="fa fa-bars"></i>
                     </button>
@@ -188,10 +180,8 @@ $result = $conn->query($sql);
                 </nav>
                 <!-- End of Topbar -->
 
-                <!-- Begin Page Content -->
                 <div class="container-fluid">
 
-                    <!-- Page Heading -->
                     <div class="d-sm-flex align-items-center justify-content-between mb-4">
                         <h1 class="h3 mb-0 text-gray-800">Status</h1>
                     </div>
@@ -259,16 +249,13 @@ $result = $conn->query($sql);
                     </div>
 
                 </div>
-                <!-- /.container-fluid -->
 
             </div>
             <!-- End of Main Content -->
 
         </div>
-        <!-- End of Content Wrapper -->
 
     </div>
-    <!-- End of Page Wrapper -->
 
     <!-- Bootstrap core JavaScript-->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>

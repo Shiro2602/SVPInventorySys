@@ -1,17 +1,14 @@
 <?php
 session_start();
 
-// Include the database connection file
 include 'dbconnect.php';
 
-// Ensure the user is logged in and the role is set in the session
 if (!isset($_SESSION['username']) || !isset($_SESSION['role'])) {
-    header("Location: login.php"); // Redirect to login page if not logged in
+    header("Location: login.php"); 
     exit();
 }
 $user_id = $_SESSION['user_id'];
 
-// Fetch the user's image from the database
 $sql = "SELECT image FROM users WHERE id = ?";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("i", $user_id);
@@ -19,10 +16,10 @@ $stmt->execute();
 $result = $stmt->get_result();
 $user = $result->fetch_assoc();
 
-// Set a default image if no image is found
+
 $user_image = $user['image'] ?? 'img/undraw_profile.svg';
 
-$role = $_SESSION['role']; // Get the user's role from the session
+$role = $_SESSION['role'];
 ?>
 
 <!DOCTYPE html>
@@ -123,18 +120,15 @@ $role = $_SESSION['role']; // Get the user's role from the session
 </head>
 <body id="page-top">
 
-    <!-- Page Wrapper -->
     <div id="wrapper">
 
         <!-- Sidebar -->
         <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
-            <!-- Sidebar - Brand -->
             <a class="sidebar-brand d-flex align-items-center justify-content-center" href="dashboard.php">
                 <div class="sidebar-brand-text mx-3">SERVPRO</div>
             </a>
 
-            <!-- Divider -->
             <hr class="sidebar-divider my-0">
 
             <!-- Nav Item - Dashboard -->
@@ -144,7 +138,7 @@ $role = $_SESSION['role']; // Get the user's role from the session
                     <span>Dashboard</span></a>
             </li>
 
-            <!-- Divider -->
+
             <hr class="sidebar-divider">
 
             <!-- Nav Item - Inventory -->
@@ -189,7 +183,6 @@ $role = $_SESSION['role']; // Get the user's role from the session
         </ul>
         <!-- End of Sidebar -->
 
-        <!-- Content Wrapper -->
         <div id="content-wrapper" class="d-flex flex-column">
 
             <!-- Main Content -->
@@ -198,7 +191,7 @@ $role = $_SESSION['role']; // Get the user's role from the session
                 <!-- Topbar -->
                 <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
 
-                    <!-- Sidebar Toggle (Topbar) -->
+                    <!-- Sidebar Toggle -->
                     <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
                         <i class="fa fa-bars"></i>
                     </button>
@@ -208,7 +201,7 @@ $role = $_SESSION['role']; // Get the user's role from the session
 
                         <div class="topbar-divider d-none d-sm-block"></div>
 
-                        <!-- Nav Item - User Information -->
+                        <!-- Dropdown/User Information -->
                         <li class="nav-item dropdown no-arrow">
                             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <span class="mr-2 d-none d-lg-inline text-gray-600 small"><?php echo htmlspecialchars($_SESSION['username']); ?></span>
@@ -232,10 +225,8 @@ $role = $_SESSION['role']; // Get the user's role from the session
                 </nav>
                 <!-- End of Topbar -->
 
-                <!-- Begin Page Content -->
                 <div class="container-fluid">
 
-                    <!-- Page Heading -->
                     <div class="d-sm-flex align-items-center justify-content-between mb-4">
                         <h1 class="h3 mb-0 text-gray-800">Inventory</h1>
                     </div>
@@ -259,11 +250,10 @@ $role = $_SESSION['role']; // Get the user's role from the session
 
                     <div class="row" id="inventory-items">
                         <?php
-                        // Fetch search query and filter
                         $search = isset($_GET['search']) ? $_GET['search'] : '';
                         $filter = isset($_GET['filter']) ? $_GET['filter'] : 'all';
 
-                        // Fetch tools data
+                        // Tools
                         if ($filter == 'all' || $filter == 'tools') {
                             $sql_tools = "SELECT id, name, quantity, price FROM tools";
                             if ($search) {
@@ -294,7 +284,7 @@ $role = $_SESSION['role']; // Get the user's role from the session
                             }
                         }
 
-                        // Fetch materials data
+                        // Materials
                         if ($filter == 'all' || $filter == 'materials') {
                             $sql_materials = "SELECT id, name, quantity, price FROM materials";
                             if ($search) {
@@ -330,16 +320,12 @@ $role = $_SESSION['role']; // Get the user's role from the session
                     </div>
 
                 </div>
-                <!-- /.container-fluid -->
 
             </div>
-            <!-- End of Main Content -->
 
         </div>
-        <!-- End of Content Wrapper -->
 
     </div>
-    <!-- End of Page Wrapper -->
 
     <!-- Add Item Modal -->
     <div class="modal fade" id="addItemModal" tabindex="-1" role="dialog" aria-labelledby="addItemModalLabel" aria-hidden="true">
@@ -419,8 +405,7 @@ $role = $_SESSION['role']; // Get the user's role from the session
     <!-- SB Admin 2 JavaScript -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/startbootstrap-sb-admin-2/4.1.3/js/sb-admin-2.min.js"></script>
 
-    <!-- Custom JavaScript -->
-    <!-- Custom JavaScript -->
+
     <script>
         $(document).ready(function() {
             // Open Edit Item Modal
@@ -453,13 +438,10 @@ $role = $_SESSION['role']; // Get the user's role from the session
                     contentType: false,
                     success: function(response) {
                         if (response.success) {
-                            // Close the modal
                             $('#editItemModal').modal('hide');
-                            // Update the item details on the page without refreshing
                             var itemId = $('#edit-item-id').val();
                             var itemType = $('#edit-item-type').val();
 
-                            // Find the card for the updated item
                             $('button.edit-item-btn[data-id="' + itemId + '"][data-type="' + itemType + '"]').closest('.inventory-item').find('h5').text($('#edit-item-name').val() + ' (' + (itemType.charAt(0).toUpperCase() + itemType.slice(1)) + ')');
                             $('button.edit-item-btn[data-id="' + itemId + '"][data-type="' + itemType + '"]').closest('.inventory-item').find('p:contains("Quantity")').text('Quantity: ' + $('#edit-item-quantity').val());
                             $('button.edit-item-btn[data-id="' + itemId + '"][data-type="' + itemType + '"]').closest('.inventory-item').find('p:contains("Price")').text('Price: ₱' + $('#edit-item-price').val());
@@ -487,7 +469,6 @@ $role = $_SESSION['role']; // Get the user's role from the session
                     success: function(response) {
                         if (response.success) {
                             $('#editItemModal').modal('hide');
-                            // Remove the inventory item from the list without reloading the page
                             $('#inventory-items .edit-item-btn[data-id="' + id + '"]').closest('.inventory-item').remove();
                         } else {
                             alert('Failed to delete item: ' + response.message);
@@ -510,10 +491,8 @@ $role = $_SESSION['role']; // Get the user's role from the session
                     success: function(response) {
                         console.log(response); 
                         if (response.success) {
-                            // Close 
                             $('#addItemModal').modal('hide');
                             $('#addItemForm')[0].reset();
-                            // Append the new item to the inventory
                             var newItem = '<div class="col-md-4">' +
                                             '<div class="inventory-item">' +
                                             '<h5>' + response.data.name + ' (' + response.data.type.charAt(0).toUpperCase() + response.data.type.slice(1) + ')</h5>' +

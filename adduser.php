@@ -6,7 +6,7 @@ include 'dbconnect.php';
 
 $message = '';
 
-// Ensure the uploads directory exists
+// Upload
 $uploadDir = 'uploads';
 if (!is_dir($uploadDir)) {
     mkdir($uploadDir, 0777, true);
@@ -18,11 +18,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $password = $_POST['password'];
     $image = $_FILES['image'];
 
-    // Check if image is uploaded
+    // Img Check
     if ($image && $image['tmp_name']) {
         $imagePath = $uploadDir . '/' . uniqid() . '_' . $image['name'];
         if (move_uploaded_file($image['tmp_name'], $imagePath)) {
-            // Hash the password
+
             $hashed_password = password_hash($password, PASSWORD_DEFAULT);
 
             $sql = "INSERT INTO users (username, role, password, image, date_added) VALUES (?, ?, ?, ?, NOW())";
@@ -79,7 +79,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <div class="col-lg-6">
             <div class="card o-hidden border-0 shadow-lg my-5 register-form-container">
                 <div class="card-body p-0">
-                    <!-- Nested Row within Card Body -->
                     <div class="row">
                         <div class="col-lg-12">
                             <div class="p-5">

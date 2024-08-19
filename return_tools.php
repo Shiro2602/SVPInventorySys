@@ -7,7 +7,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     date_default_timezone_set('Asia/Manila');
     $date_returned = date('Y-m-d H:i:s');
 
-    // Update toolstatus table to mark as returned
     $sql = "UPDATE toolstatus SET date_returned = ? WHERE id = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("si", $date_returned, $toolstatus_id);
