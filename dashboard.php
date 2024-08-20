@@ -158,6 +158,7 @@ $conn->close();
                                             <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Total Tools</div>
                                             <div class="h5 mb-0 font-weight-bold text-gray-800">
                                                 <?php
+                                                include 'dbconnect.php';
 
                                                 $sql = "SELECT COUNT(*) AS total FROM tools";
                                                 $result = $conn->query($sql);
@@ -185,6 +186,7 @@ $conn->close();
                                             <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">Tools in Use</div>
                                             <div class="h5 mb-0 font-weight-bold text-gray-800">
                                                 <?php
+                                                include 'dbconnect.php';
 
                                                 $sql = "SELECT SUM(in_use) AS in_use_sum FROM tools";
                                                 $result = $conn->query($sql);

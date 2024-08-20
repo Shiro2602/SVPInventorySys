@@ -18,6 +18,25 @@ $role = $_SESSION['role'];
 $sql = "SELECT * FROM toolstatus WHERE date_returned IS NULL";
 $result = $conn->query($sql);
 
+if (isset($_POST['submit'])) {
+    $tool_id = $_POST['tool_id'];
+    $technician_name = $_POST['technician_name'];
+    $remarks = $_POST['remarks'];
+
+    // Mark the tool as done in your tool status logic
+    // Example: $conn->query("UPDATE tools SET status='done' WHERE id=$tool_id");
+
+    // Log this action in the history table
+    $stmt = $conn->prepare("INSERT INTO history (page_name, action_type, tool_id, technician_name, remarks) VALUES (?, ?, ?, ?, ?)");
+    $page_name = 'toolstatus';
+    $action_type = 'marked as done';
+    $stmt->bind_param('ssiss', $page_name, $action_type, $tool_id, $technician_name, $remarks);
+    $stmt->execute();
+    $stmt->close();
+
+    // Redirect or reload the page as needed
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -235,9 +254,13 @@ $result = $conn->query($sql);
                                                 <div class="right">
                                                     <form action="return_tools.php" method="POST" onsubmit="return confirm('Are you sure you want to mark this tool as done?');">
                                                         <input type="hidden" name="toolstatus_id" value="<?= htmlspecialchars($row['id']) ?>">
+                                                        <input type="hidden" name="username" value="<?= htmlspecialchars($row['username']) ?>">
+                                                        <input type="hidden" name="toolstatus_tool" value="<?= isset($row['toolstatus_tool']) ? htmlspecialchars($row['toolstatus_tool']) : '' ?>">
+                                                        <input type="hidden" name="toolstatus_material" value="<?= isset($row['toolstatus_material']) ? htmlspecialchars($row['toolstatus_material']) : '' ?>">                                                        <input type="hidden" name="remarks" value="<?= htmlspecialchars($row['remarks']) ?>">
                                                         <button type="submit" class="btn btn-primary btn-sm">Mark as Done</button>
                                                     </form>
                                                 </div>
+
                                             </div>
                                         </div>
                                     </div>
