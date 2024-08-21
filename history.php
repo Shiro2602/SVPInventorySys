@@ -15,6 +15,9 @@ $user_image = $user['image'] ?? 'img/undraw_profile.svg';
 
 $role = $_SESSION['role'];
 
+$sql = "SELECT * FROM history ORDER BY action_date DESC";
+$result = $conn->query($sql);
+
 $stmt->close();
 $conn->close();
 ?>
@@ -141,45 +144,33 @@ $conn->close();
                 <!-- End of Topbar -->
 
                 <div class="container-fluid">
-
                     <h1 class="h3 mb-4 text-gray-800">History</h1>
-
                     <div class="row">
-
                         <div class="col-lg-12 mb-4">
-
-                            <!-- History Card -->
-                            <div class="card shadow mb-4 history-card">
-                                <div class="card-body">
-                                    <p>Technicians: Lorem Ipsum...</p>
-                                    <p>Tool 1, Tool 2, Tool 3...</p>
-                                    <p>Remarks: Lorem Ipsum...</p>
-                                    <div class="text-right text-gray-500">Taken at: 01/12/2024 1:00PM</div>
-                                </div>
-                            </div>
-
-                            <div class="card shadow mb-4 history-card">
-                                <div class="card-body">
-                                    <p>Technicians: Lorem Ipsum...</p>
-                                    <p>Tool 1, Tool 2, Tool 3...</p>
-                                    <p>Remarks: Lorem Ipsum...</p>
-                                    <div class="text-right text-gray-500">Returned at: 01/13/2024 2:00PM</div>
-                                </div>
-                            </div>
-
-                            <div class="card shadow mb-4 history-card">
-                                <div class="card-body">
-                                    <p>Inventory Added: Tool 1, Tool 2, Tool</p>
-                                    <p>Remarks: Lorem Ipsum...</p>
-                                    <div class="text-right text-gray-500">Added at: 02/16/2024</div>
-                                </div>
-                            </div>
-
+                            <?php if ($result->num_rows > 0): ?>
+                                <?php while($row = $result->fetch_assoc()): ?>
+                                    <div class="card shadow mb-4 history-card">
+                                        <div class="card-body">
+                                            <p>Action Type: <?= htmlspecialchars($row['action_type']) ?></p>
+                                            <p>Technician: <?= htmlspecialchars($row['technician_name']) ?></p>
+                                            <p>Tools: <?= htmlspecialchars($row['tools']) ?></p>
+                                            <p>Materials: <?= htmlspecialchars($row['materials']) ?></p>
+                                            <p>Remarks: <?= htmlspecialchars($row['remarks']) ?></p>
+                                            <div class="text-right text-gray-500">
+                                                <?= htmlspecialchars($row['action_date']) ?>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <?php endwhile; ?>
+                            <?php else: ?>
+                                <p>No history records found.</p>
+                            <?php endif; ?>
                         </div>
-
                     </div>
-
                 </div>
+            </div>
+        </div>
+    </div>
 
             </div>
 
