@@ -44,7 +44,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     
     $remarks = $toolstatus['remarks'];
 
-    $history_sql = "INSERT INTO history (action_type, technician_name, tools, materials, remarks, action_date) VALUES (?, ?, ?, ?, ?, ?)";
+    $history_sql = "INSERT INTO return_audit (action_type, technician_name, tools, materials, remarks, action_date) VALUES (?, ?, ?, ?, ?, ?)";
     $stmt = $conn->prepare($history_sql);
     $stmt->bind_param("ssssss", $action_type, $technician_name, $tools_text, $materials_text, $remarks, $date_returned);
     $stmt->execute();
