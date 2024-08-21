@@ -15,7 +15,7 @@ $user_image = $user['image'] ?? 'img/undraw_profile.svg';
 
 $role = $_SESSION['role'];
 
-$sql = "SELECT * FROM return_audit ORDER BY action_date DESC";
+$sql = "SELECT * FROM history ORDER BY action_date DESC";
 $result = $conn->query($sql);
 
 $stmt->close();

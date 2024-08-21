@@ -30,7 +30,7 @@ if ($stmt->execute()) {
     $tools = $type === 'tool' ? $name : null;
     $materials = $type === 'material' ? $name : null;
 
-    $sql = "INSERT INTO return_audit (action_type, technician_name, tools, materials, price, action_date) VALUES (?, ?, ?, ?, ?, NOW())";
+    $sql = "INSERT INTO history (action_type, technician_name, tools, materials, price, action_date) VALUES (?, ?, ?, ?, ?, NOW())";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("ssssd", $action_type, $technician_name, $tools, $materials, $price);
     $stmt->execute();
