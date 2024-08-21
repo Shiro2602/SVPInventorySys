@@ -30,31 +30,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
     $stmt->close();
 
-    // Log the action in the history table
-    $technician_name = $_POST['username'];
-    $tools = $_POST['tools'];
-    $materials = $_POST['materials'];
-    $remarks = $_POST['remarks'];
-
-    $stmt = $conn->prepare("INSERT INTO history (page_name, action_type, tool_id, technician_name, tools, materials, remarks) VALUES (?, ?, ?, ?, ?, ?, ?)");
-    if ($stmt === false) {
-        die("Prepare failed: " . $conn->error);
-    }
-
-    $page_name = 'Inventory Withdrawal';
-    $action_type = 'Item has been returned';
-    $stmt->bind_param('ssissss', $page_name, $action_type, $toolstatus_id, $technician_name, $tools, $materials, $remarks);
-
-    if ($stmt->execute() === false) {
-        die("Execute failed: " . $stmt->error);
-    } else {
-        echo "History logged successfully!";
-    }
-
-    $stmt->close();
-
-    // Redirect back to toolstatus.php
-    header("Location: toolstatus.php?message=Tool marked as done");
+    header("Location: toolstatus.php");
     exit();
 } else {
     header("Location: toolstatus.php");

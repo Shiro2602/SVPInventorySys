@@ -15,6 +15,8 @@ $user_image = $user['image'] ?? 'img/undraw_profile.svg';
 
 $role = $_SESSION['role'];
 
+$stmt->close();
+$conn->close();
 ?>
 
 
@@ -147,28 +149,31 @@ $role = $_SESSION['role'];
                         <div class="col-lg-12 mb-4">
 
                             <!-- History Card -->
-                            <?php
-                            // Fetch history records from the database
-                            $result = $conn->query("SELECT * FROM history ORDER BY action_date DESC");
+                            <div class="card shadow mb-4 history-card">
+                                <div class="card-body">
+                                    <p>Technicians: Lorem Ipsum...</p>
+                                    <p>Tool 1, Tool 2, Tool 3...</p>
+                                    <p>Remarks: Lorem Ipsum...</p>
+                                    <div class="text-right text-gray-500">Taken at: 01/12/2024 1:00PM</div>
+                                </div>
+                            </div>
 
-                            while ($row = $result->fetch_assoc()) {
-                                echo '<div class="card mb-3">';
-                                echo '<div class="card-body">';
-                                echo '<h5 class="card-title">' . ucfirst($row['page_name']) . ' - ' . ucfirst($row['action_type']) . '</h5>';
-                                echo '<p class="card-text"><strong>Technician:</strong> ' . $row['technician_name'] . '</p>';
-                                if (!empty($row['toolstatus_tool'])) {
-                                    echo '<p class="card-text"><strong>Tool ID:</strong> ' . $row['tool_id'] . '</p>';
-                                }
-                                if (!empty($row['material_id'])) {
-                                    echo '<p class="card-text"><strong>Material ID:</strong> ' . $row['material_id'] . '</p>';
-                                }
-                                echo '<p class="card-text"><strong>Remarks:</strong> ' . $row['remarks'] . '</p>';
-                                echo '<p class="card-text"><small class="text-muted">Action Date: ' . $row['action_date'] . '</small></p>';
-                                echo '</div>';
-                                echo '</div>';
-                            }
-                            ?>
+                            <div class="card shadow mb-4 history-card">
+                                <div class="card-body">
+                                    <p>Technicians: Lorem Ipsum...</p>
+                                    <p>Tool 1, Tool 2, Tool 3...</p>
+                                    <p>Remarks: Lorem Ipsum...</p>
+                                    <div class="text-right text-gray-500">Returned at: 01/13/2024 2:00PM</div>
+                                </div>
+                            </div>
 
+                            <div class="card shadow mb-4 history-card">
+                                <div class="card-body">
+                                    <p>Inventory Added: Tool 1, Tool 2, Tool</p>
+                                    <p>Remarks: Lorem Ipsum...</p>
+                                    <div class="text-right text-gray-500">Added at: 02/16/2024</div>
+                                </div>
+                            </div>
 
                         </div>
 
