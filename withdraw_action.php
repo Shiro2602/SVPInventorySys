@@ -84,11 +84,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $price = 0;
 
         $tools_list = implode(", ", array_map(function($id) use ($tool_quantities, $tool_names) {
-            return "{$tool_names[$id]}: Quantity {$tool_quantities[$id]}";
+            return "{$tool_names[$id]} (Quantity: {$tool_quantities[$id]})";
         }, $tools));
 
         $materials_list = implode(", ", array_map(function($id) use ($material_quantities, $material_names) {
-            return "{$material_names[$id]}: Quantity {$material_quantities[$id]}";
+            return "{$material_names[$id]} (Quantity: {$material_quantities[$id]})";
         }, $materials));
 
         // Insert into return_audit

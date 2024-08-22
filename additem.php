@@ -5,20 +5,27 @@ include 'dbconnect.php';
 $response = array('success' => false, 'message' => '');
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $name = $_POST['name'];
-    $type = $_POST['type'];
+    $name = isset($_POST['name']) ? trim($_POST['name']) : '';
+    $type = isset($_POST['type']) ? trim($_POST['type']) : '';
     $quantity = isset($_POST['quantity']) ? (int)$_POST['quantity'] : 0; 
     $price = isset($_POST['price']) ? (float)$_POST['price'] : 0.0; 
+
+    // Validate required fields
+    if (empty($name) || empty($type)) {
+        $response['message'] = 'Name and type are required';
+        echo json_encode($response);
+        exit();
+    }
 
     // Insert item into the correct table
     if ($type === 'tool') {
         $sql = "INSERT INTO tools (name, quantity, price, date_added) VALUES (?, ?, ?, NOW())";
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param("idi", $name, $quantity, $price);
+        $stmt->bind_param("sdi", $name, $quantity, $price);
     } else if ($type === 'material') {
         $sql = "INSERT INTO materials (name, quantity, price, date_added) VALUES (?, ?, ?, NOW())";
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param("idi", $name, $quantity, $price);
+        $stmt->bind_param("sdi", $name, $quantity, $price);
     } else {
         $response['message'] = 'Invalid item type';
         echo json_encode($response);
@@ -27,6 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if ($stmt->execute()) {
         $id = $stmt->insert_id;
+        $stmt->close();
 
         // Insert into audit log
         $action_type = 'Add Item';
@@ -36,8 +44,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $sql = "INSERT INTO history (action_type, technician_name, tools, materials, quantity, price, action_date) VALUES (?, ?, ?, ?, ?, ?, NOW())";
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param("ssssii", $action_type, $technician_name, $tools, $materials, $quantity, $price);
-        
+        $stmt->bind_param("ssssdi", $action_type, $technician_name, $tools, $materials, $quantity, $price);
+
         if ($stmt->execute()) {
             $data = [
                 'id' => $id,
@@ -51,13 +59,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         } else {
             $response['message'] = 'Error logging addition: ' . $stmt->error;
         }
+
+        $stmt->close();
     } else {
         $response['message'] = 'Error adding item: ' . $stmt->error;
     }
 
-    $stmt->close();
     $conn->close();
-
     echo json_encode($response);
 }
 ?>
