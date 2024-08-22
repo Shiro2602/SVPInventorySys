@@ -481,6 +481,7 @@ $role = $_SESSION['role'];
                     }
                 });
             });
+            
             $('#addItemForm').on('submit', function(event) {
                 event.preventDefault();
                 $.ajax({

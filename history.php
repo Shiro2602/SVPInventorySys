@@ -160,8 +160,11 @@ $conn->close();
                                             <p>Technician: <?= htmlspecialchars($row['technician_name']) ?></p>
                                             <p>Tools: <?= htmlspecialchars($row['tools']) ?></p>
                                             <p>Materials: <?= htmlspecialchars($row['materials']) ?></p>
+                                            <p>Quantity: <?= htmlspecialchars($row['quantity']) ?></p>
                                             <p>
                                                 <?php if ($row['action_type'] === 'Add Item'): ?>
+                                                    Price: <?= htmlspecialchars($row['price']) ?>
+                                                <?php elseif ($row['action_type'] === 'Delete Item'): ?>
                                                     Price: <?= htmlspecialchars($row['price']) ?>
                                                 <?php else: ?>
                                                     Remarks: <?= htmlspecialchars($row['remarks']) ?>
