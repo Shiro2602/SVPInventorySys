@@ -15,13 +15,46 @@ $user_image = $user['image'] ?? 'img/undraw_profile.svg';
 
 $role = $_SESSION['role'];
 
-$sql = "SELECT * FROM history ORDER BY action_date DESC";
-$result = $conn->query($sql);
+$searchTerm = filter_var($_GET['search'] ?? '', FILTER_SANITIZE_STRING);
+$startDate = filter_var($_GET['start_date'] ?? '', FILTER_SANITIZE_STRING);
+$endDate = filter_var($_GET['end_date'] ?? '', FILTER_SANITIZE_STRING);
+
+$itemsPerPage = 10;
+$page = filter_var($_GET['page'] ?? 1, FILTER_VALIDATE_INT);
+if ($page < 1) {
+    $page = 1;
+}
+$offset = ($page - 1) * $itemsPerPage;
+
+$sql = "SELECT SQL_CALC_FOUND_ROWS * FROM history WHERE 
+        (action_type LIKE ? OR 
+        technician_name LIKE ? OR 
+        tools LIKE ? OR 
+        materials LIKE ?)";
+
+$params = ['%' . $searchTerm . '%', '%' . $searchTerm . '%', '%' . $searchTerm . '%', '%' . $searchTerm . '%'];
+
+if (!empty($startDate) && !empty($endDate)) {
+    $sql .= " AND action_date BETWEEN ? AND ?";
+    $params[] = $startDate;
+    $params[] = $endDate;
+}
+
+$sql .= " ORDER BY action_date DESC LIMIT ? OFFSET ?";
+$params[] = $itemsPerPage;
+$params[] = $offset;
+
+$stmt = $conn->prepare($sql);
+$stmt->bind_param(str_repeat('s', count($params)), ...$params);
+$stmt->execute();
+$result = $stmt->get_result();
+
+$totalRecords = $conn->query("SELECT FOUND_ROWS()")->fetch_assoc()['FOUND_ROWS()'];
+$totalPages = ceil($totalRecords / $itemsPerPage);
 
 $stmt->close();
 $conn->close();
 ?>
-
 
 <!DOCTYPE html>
 <html lang="en">
@@ -35,9 +68,18 @@ $conn->close();
     <!-- SB Admin 2 Bootstrap CSS --> 
     <link href="https://cdn.jsdelivr.net/npm/startbootstrap-sb-admin-2@4.1.3/css/sb-admin-2.min.css" rel="stylesheet">
 </head>
+
 <style>
   .history-card p {
     color: black;
+  }
+  .pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+  }
+  .page-item {
+    margin: 0 5px;
   }
 </style>
 
@@ -147,9 +189,18 @@ $conn->close();
                     
                     <h1 class="h3 mb-4 text-gray-800">History</h1>
 
+                    <div class="mb-4 d-flex align-items-center">
+                        <input type="text" id="searchInput" class="form-control form-control-sm w-25 mr-2" placeholder="Search...">
+                    </div>
+                    <div class="mb-4 d-flex align-items-center">
+                        <input type="date" id="startDate" class="form-control form-control-sm w-25 mr-2">
+                        <input type="date" id="endDate" class="form-control form-control-sm w-25 ">
+                        <button id="filterButton" class="btn btn-primary btn-sm ml-2">Filter</button> 
+                    </div>
+
                     <div class="row">
 
-                        <div class="col-lg-12 mb-4">
+                        <div class="col-lg-12 mb-4" id="historyContainer">
 
                             <?php if ($result->num_rows > 0): ?>
                                 <?php while($row = $result->fetch_assoc()): ?>
@@ -183,6 +234,17 @@ $conn->close();
 
                     </div>
 
+                    <nav class="pagination">
+                        <?php if ($page > 1): ?>
+                            <a class="page-item" href="?page=<?= $page - 1 ?>&search=<?= urlencode($searchTerm) ?>&start_date=<?= urlencode($startDate) ?>&end_date=<?= urlencode($endDate) ?>">Previous</a>
+                        <?php endif; ?>
+                        <?php for ($i = 1; $i <= $totalPages; $i++): ?>
+                            <a class="page-item <?= $i == $page ? 'active' : '' ?>" href="?page=<?= $i ?>&search=<?= urlencode($searchTerm) ?>&start_date=<?= urlencode($startDate) ?>&end_date=<?= urlencode($endDate) ?>"><?= $i ?></a>
+                        <?php endfor; ?>
+                        <?php if ($page < $totalPages): ?>
+                            <a class="page-item" href="?page=<?= $page + 1 ?>&search=<?= urlencode($searchTerm) ?>&start_date=<?= urlencode($startDate) ?>&end_date=<?= urlencode($endDate) ?>">Next</a>
+                        <?php endif; ?>
+                    </nav>
                 </div>
 
             </div>
@@ -197,6 +259,50 @@ $conn->close();
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.6.0/js/bootstrap.bundle.min.js"></script>
     <!-- SB Admin 2 JavaScript -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/startbootstrap-sb-admin-2/4.1.3/js/sb-admin-2.min.js"></script>
+
+    <script>
+    document.getElementById('searchInput').addEventListener('input', function() {
+        const searchValue = this.value;
+        const startDate = document.getElementById('startDate').value;
+        const endDate = document.getElementById('endDate').value;
+        updatePaginationLinks(searchValue, startDate, endDate);
+        fetch(`history.php?search=${encodeURIComponent(searchValue)}&start_date=${startDate}&end_date=${endDate}`)
+            .then(response => response.text())
+            .then(data => {
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(data, 'text/html');
+                const historyContent = doc.getElementById('historyContainer').innerHTML;
+                document.getElementById('historyContainer').innerHTML = historyContent;
+            });
+    });
+
+    document.getElementById('filterButton').addEventListener('click', function() {
+        const searchValue = document.getElementById('searchInput').value;
+        const startDate = document.getElementById('startDate').value;
+        const endDate = document.getElementById('endDate').value;
+        updatePaginationLinks(searchValue, startDate, endDate);
+        fetch(`history.php?search=${encodeURIComponent(searchValue)}&start_date=${startDate}&end_date=${endDate}`)
+            .then(response => response.text())
+            .then(data => {
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(data, 'text/html');
+                const historyContent = doc.getElementById('historyContainer').innerHTML;
+                document.getElementById('historyContainer').innerHTML = historyContent;
+            });
+    });
+
+    function updatePaginationLinks(searchValue, startDate, endDate) {
+        const paginationLinks = document.querySelectorAll('.pagination a');
+        paginationLinks.forEach(link => {
+            const href = link.href;
+            const url = new URL(href, window.location.href);
+            url.searchParams.set('search', searchValue);
+            url.searchParams.set('start_date', startDate);
+            url.searchParams.set('end_date', endDate);
+            link.href = url.href;
+        });
+    }        
+    </script>
 
 
 </body>
