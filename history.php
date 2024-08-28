@@ -26,7 +26,8 @@ if ($page < 1) {
 }
 $offset = ($page - 1) * $itemsPerPage;
 
-$sql = "SELECT SQL_CALC_FOUND_ROWS * FROM history WHERE 
+// Base query for filtering records
+$sql = "SELECT COUNT(*) as total FROM history WHERE 
         (action_type LIKE ? OR 
         technician_name LIKE ? OR 
         tools LIKE ? OR 
@@ -40,17 +41,31 @@ if (!empty($startDate) && !empty($endDate)) {
     $params[] = $endDate;
 }
 
-$sql .= " ORDER BY action_date DESC LIMIT ? OFFSET ?";
-$params[] = $itemsPerPage;
-$params[] = $offset;
-
 $stmt = $conn->prepare($sql);
 $stmt->bind_param(str_repeat('s', count($params)), ...$params);
 $stmt->execute();
 $result = $stmt->get_result();
-
-$totalRecords = $conn->query("SELECT FOUND_ROWS()")->fetch_assoc()['FOUND_ROWS()'];
+$totalRecords = $result->fetch_assoc()['total'];
 $totalPages = ceil($totalRecords / $itemsPerPage);
+
+// Query for paginated records
+$sql = "SELECT * FROM history WHERE 
+        (action_type LIKE ? OR 
+        technician_name LIKE ? OR 
+        tools LIKE ? OR 
+        materials LIKE ?)";
+
+if (!empty($startDate) && !empty($endDate)) {
+    $sql .= " AND action_date BETWEEN ? AND ?";
+}
+
+$sql .= " ORDER BY action_date DESC LIMIT ? OFFSET ?";
+$params = array_merge($params, [$itemsPerPage, $offset]);
+
+$stmt = $conn->prepare($sql);
+$stmt->bind_param(str_repeat('s', count($params) - 2) . 'ii', ...$params);
+$stmt->execute();
+$result = $stmt->get_result();
 
 $stmt->close();
 $conn->close();
@@ -265,43 +280,29 @@ $conn->close();
         const searchValue = this.value;
         const startDate = document.getElementById('startDate').value;
         const endDate = document.getElementById('endDate').value;
-        updatePaginationLinks(searchValue, startDate, endDate);
-        fetch(`history.php?search=${encodeURIComponent(searchValue)}&start_date=${startDate}&end_date=${endDate}`)
-            .then(response => response.text())
-            .then(data => {
-                const parser = new DOMParser();
-                const doc = parser.parseFromString(data, 'text/html');
-                const historyContent = doc.getElementById('historyContainer').innerHTML;
-                document.getElementById('historyContainer').innerHTML = historyContent;
-            });
+        fetchFilteredData(searchValue, startDate, endDate);
     });
 
     document.getElementById('filterButton').addEventListener('click', function() {
         const searchValue = document.getElementById('searchInput').value;
         const startDate = document.getElementById('startDate').value;
         const endDate = document.getElementById('endDate').value;
-        updatePaginationLinks(searchValue, startDate, endDate);
+        fetchFilteredData(searchValue, startDate, endDate);
+    });
+
+    function fetchFilteredData(searchValue, startDate, endDate) {
         fetch(`history.php?search=${encodeURIComponent(searchValue)}&start_date=${startDate}&end_date=${endDate}`)
             .then(response => response.text())
             .then(data => {
                 const parser = new DOMParser();
                 const doc = parser.parseFromString(data, 'text/html');
                 const historyContent = doc.getElementById('historyContainer').innerHTML;
+                const paginationContent = doc.querySelector('.pagination').innerHTML;
                 document.getElementById('historyContainer').innerHTML = historyContent;
+                document.querySelector('.pagination').innerHTML = paginationContent;
             });
-    });
-
-    function updatePaginationLinks(searchValue, startDate, endDate) {
-        const paginationLinks = document.querySelectorAll('.pagination a');
-        paginationLinks.forEach(link => {
-            const href = link.href;
-            const url = new URL(href, window.location.href);
-            url.searchParams.set('search', searchValue);
-            url.searchParams.set('start_date', startDate);
-            url.searchParams.set('end_date', endDate);
-            link.href = url.href;
-        });
-    }        
+    }
+ 
     </script>
 
 

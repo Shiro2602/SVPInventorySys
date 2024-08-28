@@ -176,34 +176,6 @@ $conn->close();
                                 </div>
                             </div>
                         </div>
-
-                        <!-- Tool in Use Card-->
-                        <div class="col-xl-4 col-md-6 mb-4">
-                            <div class="card border-left-danger shadow h-100 py-2">
-                                <div class="card-body">
-                                    <div class="row no-gutters align-items-center">
-                                        <div class="col mr-2">
-                                            <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">Tools in Use</div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                                <?php
-                                                include 'dbconnect.php';
-
-                                                $sql = "SELECT SUM(in_use) AS in_use_sum FROM tools";
-                                                $result = $conn->query($sql);
-                                                if ($result->num_rows > 0) {
-                                                    $row = $result->fetch_assoc();
-                                                    echo htmlspecialchars($row['in_use_sum']);
-                                                } else {
-                                                    echo "0";
-                                                }
-                                                $conn->close();
-                                                ?>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
                     </div>
                 </div>
 
