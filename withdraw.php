@@ -2,11 +2,41 @@
 session_start();
 include 'dbconnect.php';
 
-$tools_sql = "SELECT * FROM tools";
-$materials_sql = "SELECT * FROM materials";
+// Set the number of records to display per page
+$records_per_page = 10;
 
+// Get the current page number from the query string, default to 1 if not set
+$current_page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+$current_page = max(1, $current_page);
+
+// Calculate the offset for the SQL query
+$offset = ($current_page - 1) * $records_per_page;
+
+// Retrieve tools with pagination
+$tools_sql = "SELECT * FROM tools LIMIT $records_per_page OFFSET $offset";
 $tools_result = $conn->query($tools_sql);
+
+// Retrieve total number of tools
+$total_tools_sql = "SELECT COUNT(*) as count FROM tools";
+$total_tools_result = $conn->query($total_tools_sql);
+$total_tools_row = $total_tools_result->fetch_assoc();
+$total_tools = $total_tools_row['count'];
+
+// Calculate total pages for tools
+$total_pages_tools = ceil($total_tools / $records_per_page);
+
+// Retrieve materials with pagination
+$materials_sql = "SELECT * FROM materials LIMIT $records_per_page OFFSET $offset";
 $materials_result = $conn->query($materials_sql);
+
+// Retrieve total number of materials
+$total_materials_sql = "SELECT COUNT(*) as count FROM materials";
+$total_materials_result = $conn->query($total_materials_sql);
+$total_materials_row = $total_materials_result->fetch_assoc();
+$total_materials = $total_materials_row['count'];
+
+// Calculate total pages for materials
+$total_pages_materials = ceil($total_materials / $records_per_page);
 
 $user_id = $_SESSION['user_id'];
 
@@ -19,7 +49,7 @@ $user = $result->fetch_assoc();
 
 $user_image = $user['image'] ?? 'img/undraw_profile.svg';
 
-$role = $_SESSION['role']; 
+$role = $_SESSION['role'];
 ?>
 
 <!DOCTYPE html>
@@ -196,6 +226,22 @@ $role = $_SESSION['role'];
                         </div>
                         <button type="submit" class="btn btn-primary">Withdraw</button>
                     </form>
+                    
+                    <div class="pagination float-right">
+                        <ul class="pagination">
+                            <?php if ($current_page > 1): ?>
+                                <li class="page-item"><a class="page-link" href="?page=<?= $current_page - 1 ?>">Previous</a></li>
+                            <?php endif; ?>
+                            <?php for ($i = 1; $i <= $total_pages_tools; $i++): ?>
+                                <li class="page-item <?= ($i == $current_page) ? 'active' : '' ?>">
+                                    <a class="page-link" href="?page=<?= $i ?>"><?= $i ?></a>
+                                </li>
+                            <?php endfor; ?>
+                            <?php if ($current_page < $total_pages_tools): ?>
+                                <li class="page-item"><a class="page-link" href="?page=<?= $current_page + 1 ?>">Next</a></li>
+                            <?php endif; ?>
+                        </ul>
+                    </div>
 
                 </div>
 
